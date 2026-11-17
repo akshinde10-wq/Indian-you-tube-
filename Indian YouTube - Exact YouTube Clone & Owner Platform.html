@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian YouTube</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Noto+Sans+Devanagari:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Roboto', '"Noto Sans Devanagari"', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        yt: {
+                            red: '#FF0000',
+                            darkBg: '#0F0F0F',
+                            darkSurface: '#272727',
+                            darkHover: '#3F3F3F',
+                            darkCard: '#181818',
+                            lightBg: '#FFFFFF',
+                            lightSurface: '#F2F2F2',
+                            lightHover: '#E5E5E5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom YouTube Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(144, 144, 144, 0.35);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(144, 144, 144, 0.6);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .tricolor-bar {
+            background: linear-gradient(90deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
+        }
+        /* Video Progress Bar Hover Expansion */
+        .yt-scrubber-container:hover .yt-scrubber-track {
+            height: 5px;
+        }
+        .yt-scrubber-container:hover .yt-scrubber-thumb {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .yt-scrubber-thumb {
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.12s ease;
+        }
+    </style>
+</head>
+<body class="bg-yt-lightBg dark:bg-yt-darkBg text-[#0F0F0F] dark:text-[#F1F1F1] font-sans antialiased selection:bg-yt-red selection:text-white">
+
+    <!-- ==================== TOP STICKY YOUTUBE HEADER (56px) ==================== -->
+    <header class="fixed top-0 inset-x-0 h-14 bg-yt-lightBg/95 dark:bg-yt-darkBg/95 backdrop-blur-md z-40 px-2 sm:px-4 flex items-center justify-between gap-2">
+        <!-- Left: Hamburger + Authentic Indian YouTube Logo -->
+        <div class="flex items-center gap-1 sm:gap-3 shrink-0">
+            <button id="menu-toggle-btn" aria-label="Menu" class="p-2 rounded-full hover:bg-yt-lightHover dark:hover:bg-yt-darkSurface transition-colors">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+
+            <button id="brand-logo-btn" class="flex items-center gap-1.5 py-1 pr-2 focus:outline-none group" title="Indian YouTube Home">
+                <div class="flex flex-col items-center">
+                    <div class="w-8 h-[22px] rounded-[6px] bg-yt-red flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                        <div class="w-0 h-0 border-t-[4.5px] border-t-transparent border-l-[8px] border-l-white border-b-[4.5px] border-b-transparent ml-0.5"></div>
+                    </div>
+                    <div class="w-7 h-[2px] rounded-full tricolor-bar mt-[2px]"></div>
+                </div>
+                <div class="flex items-start leading-none">
+                    <span class="font-bold text-[18px] sm:text-[20px] tracking-tighter">Indian YouTube</span>
+                    <span class="text-[10px] font-medium text-gray-500 dark:text-gray-400 ml-0.5 -mt-0.5">IN</span>
+                </div>
+            </button>
+        </div>
+
+        <!-- Center: Exact YouTube Pill Search Bar + Circular Voice Search Mic -->
+        <div class="flex-1 max-w-[640px] flex items-center justify-center gap-2 sm:gap-3 mx-1">
+            <form id="search-form" class="flex-1 flex items-center h-10">
+                <div class="flex-1 flex items-center h-full bg-white dark:bg-[#121212] border border-[#CCCCCC] dark:border-[#303030] focus-within:border-[#1C62B9] dark:focus-within:border-[#3EA6FF] rounded-l-full px-3 sm:px-4 shadow-inner">
+                    <i data-lucide="search" class="w-4 h-4 text-gray-400 mr-2.5 hidden sm:block shrink-0"></i>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Search" 
+                        autocomplete="off"
+                        class="w-full bg-transparent text-sm sm:text-[15px] focus:outline-none placeholder-gray-500 dark:placeholder-[#888888]"
+                    >
+                    <button type="button" id="clear-search-btn" class="hidden p-1 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-800 text-gray-400">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <button type="submit" aria-label="Search" class="h-full px-4 sm:px-5 bg-[#F8F8F8] dark:bg-[#222222] hover:bg-[#F0F0F0] dark:hover:bg-[#303030] border border-l-0 border-[#CCCCCC] dark:border-[#303030] rounded-r-full flex items-center justify-center transition-colors" title="Search">
+                    <i data-lucide="search" class="w-5 h-5 text-gray-700 dark:text-gray-200"></i>
+                </button>
+            </form>
+
+            <!-- Voice Search Circular Button -->
+            <button type="button" id="voice-search-btn" aria-label="Search with your voice" class="w-10 h-10 rounded-full bg-yt-lightSurface dark:bg-[#181818] hover:bg-yt-lightHover dark:hover:bg-[#303030] flex items-center justify-center shrink-0 transition-colors" title="Search with your voice">
+                <i data-lucide="mic" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Right: Language Switcher, Owner Studio (₹), Create (+), Notifications, Theme, Avatar -->
+        <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+            <!-- Language Selector (Marathi / Hindi / English) -->
+            <div class="hidden sm:flex items-center bg-yt-lightSurface dark:bg-yt-darkSurface rounded-full px-2.5 h-9 border border-transparent hover:border-gray-300 dark:hover:border-zinc-600 transition-colors" title="Change Language / भाषा बदला">
+                <i data-lucide="languages" class="w-4 h-4 text-yt-red mr-1.5 shrink-0"></i>
+                <select id="language-selector" aria-label="Language" class="bg-transparent text-xs font-medium focus:outline-none cursor-pointer">
+                    <option value="en" class="bg-white dark:bg-zinc-900 text-black dark:text-white">English</option>
+                    <option value="mr" class="bg-white dark:bg-zinc-900 text-black dark:text-white">मराठी</option>
+                    <option value="hi" class="bg-white dark:bg-zinc-900 text-black dark:text-white">हिंदी</option>
+                </select>
+            </div>
+
+            <!-- Owner Studio & Wallet Pill -->
+            <button id="open-owner-studio-btn" class="flex items-center gap-1.5 h-9 px-2.5 sm:px-3 rounded-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-700 dark:text-amber-300 text-xs font-bold transition-colors" title="Owner Studio — 100% Control & ₹ Income">
+                <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-500 fill-current"></i>
+                <span data-i18n="ownerStudio" class="hidden xl:inline">Owner Studio</span>
+                <span id="header-wallet-badge" class="font-extrabold text-[11px] sm:text-xs">₹52,480</span>
+            </button>
+
+            <!-- Create (+) Dropdown Button (Upload Video / Go Live) -->
+            <div class="relative">
+                <button id="create-menu-btn" class="flex items-center gap-1.5 h-9 px-3 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface hover:bg-yt-lightHover dark:hover:bg-yt-darkHover text-sm font-medium transition-colors" title="Create">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                    <span data-i18n="createBtn" class="hidden md:inline">Create</span>
+                </button>
+                <div id="create-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-[#282828] rounded-xl shadow-2xl border border-gray-200 dark:border-zinc-700 py-1.5 z-50">
+                    <button id="open-upload-modal" class="w-full px-4 py-2.5 text-left text-sm flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-[#3E3E3E]">
+                        <i data-lucide="video" class="w-4 h-4 text-yt-red"></i>
+                        <span data-i18n="uploadVideoOption">Upload video</span>
+                    </button>
+                    <button id="open-live-stream-btn" class="w-full px-4 py-2.5 text-left text-sm flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-[#3E3E3E]">
+                        <i data-lucide="radio" class="w-4 h-4 text-yt-red"></i>
+                        <span data-i18n="goLiveOption">Go live</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notifications Bell -->
+            <div class="relative">
+                <button id="notifications-btn" aria-label="Notifications" class="relative w-10 h-10 rounded-full hover:bg-yt-lightHover dark:hover:bg-yt-darkSurface flex items-center justify-center transition-colors" title="Notifications">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span id="notif-badge" class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-yt-red text-white text-[10px] font-bold flex items-center justify-center">3</span>
+                </button>
+                <div id="notifications-dropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-[#282828] rounded-2xl shadow-2xl border border-gray-200 dark:border-zinc-700 overflow-hidden z-50">
+                    <div class="px-4 py-3 border-b border-gray-200 dark:border-zinc-700 flex items-center justify-between">
+                        <span data-i18n="notificationsTitle" class="font-medium text-sm">Notifications</span>
+                        <button id="mark-all-read-btn" data-i18n="markAllRead" class="text-xs text-[#065FD4] dark:text-[#3EA6FF] font-medium hover:underline">Mark all read</button>
+                    </div>
+                    <div id="notifications-list" class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-zinc-700/70"></div>
+                </div>
+            </div>
+
+            <!-- Theme Toggle -->
+            <button id="theme-toggle-btn" aria-label="Toggle Theme" class="w-10 h-10 rounded-full hover:bg-yt-lightHover dark:hover:bg-yt-darkSurface flex items-center justify-center transition-colors" title="Appearance: Dark / Light">
+                <i id="theme-icon" data-lucide="sun" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Profile Avatar -->
+            <button id="profile-avatar-btn" class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FF9933] via-yt-red to-[#138808] text-white font-bold text-xs flex items-center justify-center ml-1 shrink-0 ring-2 ring-transparent hover:ring-amber-400 transition-all" title="Indian YouTube Owner Account">
+                IN
+            </button>
+        </div>
+    </header>
+
+    <!-- ==================== MOBILE SIDEBAR BACKDROP ==================== -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden"></div>
+
+    <!-- ==================== MAIN SHELL ==================== -->
+    <div class="pt-14 flex min-h-screen">
+
+        <!-- LEFT FULL SIDEBAR (240px) -->
+        <aside id="sidebar-full" class="fixed top-14 left-0 bottom-0 w-60 bg-yt-lightBg dark:bg-yt-darkBg z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 overflow-y-auto px-3 py-3 space-y-1">
+            <!-- Primary Navigation -->
+            <button data-nav="home" class="nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-medium bg-yt-lightSurface dark:bg-yt-darkSurface">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span data-i18n="navHome">Home</span>
+            </button>
+            <button data-nav="shorts" class="nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="zap" class="w-5 h-5"></i>
+                <span data-i18n="navShorts">Shorts</span>
+            </button>
+            <button data-nav="subscriptions" class="nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="tv-2" class="w-5 h-5"></i>
+                <span data-i18n="navSubscriptions">Subscriptions</span>
+            </button>
+
+            <hr class="my-3 border-gray-200 dark:border-[#272727]">
+
+            <!-- You Section -->
+            <div class="px-3 py-1.5 flex items-center gap-1.5 text-base font-bold">
+                <span data-i18n="sidebarYou">You</span>
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </div>
+            <button data-nav="history" class="nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="history" class="w-5 h-5"></i>
+                <span data-i18n="navHistory">History</span>
+            </button>
+            <button data-nav="playlists" class="nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="list-video" class="w-5 h-5"></i>
+                <span data-i18n="navPlaylists">Playlists</span>
+            </button>
+            <button data-nav="your-videos" class="nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="play-square" class="w-5 h-5"></i>
+                <span data-i18n="navYourVideos">Your videos</span>
+            </button>
+            <button data-nav="watch-later" class="nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+                <div class="flex items-center justify-between flex-1">
+                    <span data-i18n="navWatchLater">Watch later</span>
+                    <span id="watch-later-badge" class="text-xs text-gray-500 dark:text-gray-400">0</span>
+                </div>
+            </button>
+            <button data-nav="liked" class="nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="thumbs-up" class="w-5 h-5"></i>
+                <span data-i18n="navLiked">Liked videos</span>
+            </button>
+
+            <hr class="my-3 border-gray-200 dark:border-[#272727]">
+
+            <!-- Subscriptions List -->
+            <div data-i18n="sidebarSubscriptionsHeader" class="px-3 py-1.5 text-base font-bold">Subscriptions</div>
+            <div id="sidebar-subscriptions-list" class="space-y-0.5"></div>
+
+            <hr class="my-3 border-gray-200 dark:border-[#272727]">
+
+            <!-- Explore Section -->
+            <div data-i18n="sidebarExploreHeader" class="px-3 py-1.5 text-base font-bold">Explore</div>
+            <button data-explore="Trending" class="explore-btn w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="flame" class="w-5 h-5"></i>
+                <span data-i18n="expTrending">Trending</span>
+            </button>
+            <button data-explore="Music" class="explore-btn w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="music" class="w-5 h-5"></i>
+                <span data-i18n="expMusic">Music</span>
+            </button>
+            <button data-explore="Gaming" class="explore-btn w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="gamepad-2" class="w-5 h-5"></i>
+                <span data-i18n="expGaming">Gaming</span>
+            </button>
+            <button data-explore="News" class="explore-btn w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="newspaper" class="w-5 h-5"></i>
+                <span data-i18n="expNews">News</span>
+            </button>
+            <button data-explore="Cricket" class="explore-btn w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="trophy" class="w-5 h-5"></i>
+                <span data-i18n="expSports">Sports & Cricket</span>
+            </button>
+
+            <hr class="my-3 border-gray-200 dark:border-[#272727]">
+
+            <!-- Owner Studio Direct Link -->
+            <button id="sidebar-owner-btn" class="w-full flex items-center gap-4 px-3 h-10 rounded-xl text-sm font-bold text-amber-700 dark:text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 transition-colors">
+                <i data-lucide="crown" class="w-5 h-5 text-amber-500"></i>
+                <span data-i18n="sidebarOwnerControl">Owner Studio (₹)</span>
+            </button>
+
+            <!-- Mobile Language Selector inside Sidebar -->
+            <div class="sm:hidden pt-3 px-3">
+                <label class="block text-xs text-gray-500 mb-1">Language / भाषा</label>
+                <select id="mobile-language-selector" class="w-full bg-yt-lightSurface dark:bg-yt-darkSurface rounded-lg px-3 py-2 text-xs font-bold">
+                    <option value="en">English</option>
+                    <option value="mr">मराठी (Marathi)</option>
+                    <option value="hi">हिंदी (Hindi)</option>
+                </select>
+            </div>
+
+            <div class="px-3 pt-4 pb-6 text-[11px] text-gray-500 dark:text-[#717171] space-y-2 leading-relaxed">
+                <p>About Press Copyright Contact us Creators Advertise Developers</p>
+                <p>© 2026 Indian YouTube LLC • 100% Owner Edition 🇮🇳</p>
+            </div>
+        </aside>
+
+        <!-- LEFT COMPACT MINI-RAIL SIDEBAR (72px — Authentic YouTube Collapsed State) -->
+        <aside id="sidebar-mini" class="hidden fixed top-14 left-0 bottom-0 w-[72px] bg-yt-lightBg dark:bg-yt-darkBg z-30 py-2 px-1 flex-col items-center gap-1">
+            <button data-nav="home" class="mini-nav-item w-16 py-3.5 rounded-xl flex flex-col items-center gap-1.5 hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span data-i18n="navHome" class="text-[10px]">Home</span>
+            </button>
+            <button data-nav="shorts" class="mini-nav-item w-16 py-3.5 rounded-xl flex flex-col items-center gap-1.5 hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="zap" class="w-5 h-5"></i>
+                <span data-i18n="navShorts" class="text-[10px]">Shorts</span>
+            </button>
+            <button data-nav="subscriptions" class="mini-nav-item w-16 py-3.5 rounded-xl flex flex-col items-center gap-1.5 hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="tv-2" class="w-5 h-5"></i>
+                <span data-i18n="navSubscriptions" class="text-[10px] truncate max-w-[60px]">Subscriptions</span>
+            </button>
+            <button data-nav="history" class="mini-nav-item w-16 py-3.5 rounded-xl flex flex-col items-center gap-1.5 hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                <i data-lucide="circle-user" class="w-5 h-5"></i>
+                <span data-i18n="sidebarYou" class="text-[10px]">You</span>
+            </button>
+            <button id="mini-owner-btn" class="w-16 py-3.5 rounded-xl flex flex-col items-center gap-1.5 text-amber-500 hover:bg-amber-500/15">
+                <i data-lucide="crown" class="w-5 h-5"></i>
+                <span class="text-[10px] font-bold">Owner ₹</span>
+            </button>
+        </aside>
+
+        <!-- ==================== MAIN CONTENT AREA ==================== -->
+        <main id="main-content" class="flex-1 lg:pl-60 min-w-0 transition-all duration-200">
+
+            <!-- VIEW 1: YOUTUBE HOME / EXPLORE / LIBRARY FEED -->
+            <div id="feed-view">
+                <!-- Sticky Category Chips Bar -->
+                <div class="sticky top-14 bg-yt-lightBg/95 dark:bg-yt-darkBg/95 backdrop-blur-md z-20 px-4 sm:px-6 py-3 flex items-center gap-3 overflow-x-auto no-scrollbar">
+                    <div id="category-pills" class="flex items-center gap-2.5"></div>
+                </div>
+
+                <!-- Section Heading (Shown for Subscriptions, History, Trending, etc.) -->
+                <div id="section-header" class="hidden px-4 sm:px-6 pt-3 pb-1 flex items-center justify-between">
+                    <div>
+                        <h1 id="section-title" class="text-xl sm:text-2xl font-bold"></h1>
+                        <p id="section-subtitle" class="text-xs sm:text-sm text-gray-500 dark:text-[#AAAAAA]"></p>
+                    </div>
+                </div>
+
+                <!-- Responsive YouTube 16:9 Video Grid -->
+                <div id="video-grid" class="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-x-4 gap-y-8"></div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden flex-col items-center justify-center py-24 px-4 text-center">
+                    <div class="w-20 h-20 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface flex items-center justify-center mb-4">
+                        <i data-lucide="video-off" class="w-9 h-9 text-gray-400"></i>
+                    </div>
+                    <h3 data-i18n="emptyTitle" class="text-lg font-bold mb-1">No videos found</h3>
+                    <p data-i18n="emptySubtitle" class="text-sm text-gray-500 dark:text-[#AAAAAA] max-w-md mb-4">Try different keywords or reset your filters.</p>
+                    <button id="reset-filters-btn" data-i18n="showAllVideosBtn" class="px-5 py-2 rounded-full bg-[#0F0F0F] text-white dark:bg-[#F1F1F1] dark:text-[#0F0F0F] text-sm font-medium">Show all videos</button>
+                </div>
+            </div>
+
+            <!-- VIEW 2: EXACT YOUTUBE WATCH PAGE -->
+            <div id="watch-view" class="hidden px-3 sm:px-6 py-4 max-w-[1700px] mx-auto">
+                <div id="watch-layout-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Primary Column: Custom YouTube Player + Metadata + Comments -->
+                    <div id="watch-primary-col" class="lg:col-span-2 space-y-3">
+                        <!-- Custom YouTube Video Player Container -->
+                        <div id="yt-player-wrapper" class="relative w-full aspect-video bg-black rounded-xl overflow-hidden group select-none shadow-lg">
+                            <video id="main-video-player" class="w-full h-full object-contain bg-black cursor-pointer" playsinline></video>
+
+                            <!-- Captions / CC Subtitle Overlay -->
+                            <div id="player-cc-overlay" class="hidden absolute bottom-16 inset-x-0 flex justify-center pointer-events-none px-4 z-10">
+                                <span id="player-cc-text" class="bg-black/80 text-white text-xs sm:text-base px-3 py-1 rounded font-medium">
+                                    [CC] Welcome to Indian YouTube — Official Broadcast
+                                </span>
+                            </div>
+
+                            <!-- Pre-Roll / Mid-Roll Skippable Ad Overlay (Generates Live ₹ to Owner Wallet) -->
+                            <div id="preroll-ad-overlay" class="hidden absolute inset-0 bg-black/85 z-20 flex flex-col justify-between p-4 sm:p-6">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2 py-0.5 rounded bg-amber-400 text-black text-[11px] font-black uppercase">Ad • 1 of 1</span>
+                                        <span class="text-xs text-gray-300">Sponsored • Indian YouTube Ads</span>
+                                    </div>
+                                    <span id="ad-owner-credit-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
+                                        +₹2.40 credited to Owner Wallet
+                                    </span>
+                                </div>
+
+                                <div class="my-auto text-center space-y-2 max-w-md mx-auto">
+                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#FF9933] via-yt-red to-[#138808] mx-auto flex items-center justify-center shadow-lg">
+                                        <i data-lucide="sparkles" class="w-6 h-6 text-white"></i>
+                                    </div>
+                                    <h4 class="text-base sm:text-xl font-bold text-white">Indian YouTube Premium & Partner Network</h4>
+                                    <p class="text-xs text-gray-300">Ad revenue from every view goes directly to the Platform Owner.</p>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-400">indianyoutube.in/ads</span>
+                                    <button id="skip-ad-btn" class="px-4 py-2 rounded-lg bg-black/80 hover:bg-black border border-white/30 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors">
+                                        <span id="skip-ad-label">Skip Ad in 3s</span>
+                                        <i data-lucide="skip-forward" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Quality / Speed Settings Popover Menu -->
+                            <div id="player-settings-menu" class="hidden absolute bottom-14 right-3 w-64 bg-[#1C1C1C]/95 backdrop-blur-md text-white rounded-xl border border-white/15 shadow-2xl p-2 z-20 text-xs">
+                                <div class="px-2.5 py-1.5 font-bold text-gray-400 uppercase tracking-wider text-[10px]">Playback Speed</div>
+                                <div class="grid grid-cols-5 gap-1 px-1 pb-2 border-b border-white/10">
+                                    <button data-speed="0.5" class="speed-opt py-1 rounded hover:bg-white/15">0.5x</button>
+                                    <button data-speed="1" class="speed-opt py-1 rounded bg-yt-red font-bold">1x</button>
+                                    <button data-speed="1.25" class="speed-opt py-1 rounded hover:bg-white/15">1.25x</button>
+                                    <button data-speed="1.5" class="speed-opt py-1 rounded hover:bg-white/15">1.5x</button>
+                                    <button data-speed="2" class="speed-opt py-1 rounded hover:bg-white/15">2x</button>
+                                </div>
+                                <div class="px-2.5 py-1.5 mt-1 font-bold text-gray-400 uppercase tracking-wider text-[10px]">Quality</div>
+                                <div class="space-y-0.5">
+                                    <button data-quality="1080p HD" class="quality-opt w-full px-2.5 py-1.5 rounded flex items-center justify-between bg-white/10 font-bold">
+                                        <span>1080p <sup class="text-yt-red font-black">HD</sup></span>
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-yt-red"></i>
+                                    </button>
+                                    <button data-quality="720p HD" class="quality-opt w-full px-2.5 py-1.5 rounded flex items-center justify-between hover:bg-white/10">
+                                        <span>720p HD</span>
+                                    </button>
+                                    <button data-quality="480p" class="quality-opt w-full px-2.5 py-1.5 rounded flex items-center justify-between hover:bg-white/10">
+                                        <span>480p</span>
+                                    </button>
+                                    <button data-quality="360p" class="quality-opt w-full px-2.5 py-1.5 rounded flex items-center justify-between hover:bg-white/10">
+                                        <span>360p (Data Saver)</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Custom YouTube Bottom Control Bar -->
+                            <div id="custom-player-controls" class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-8 pb-2 px-3 flex flex-col gap-1.5 z-10 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                <!-- Red Scrubbing Progress Bar -->
+                                <div id="yt-scrubber" class="yt-scrubber-container relative w-full h-3 flex items-center cursor-pointer">
+                                    <div class="yt-scrubber-track w-full h-[3px] bg-white/30 rounded-full relative transition-all">
+                                        <div id="yt-buffered-bar" class="absolute inset-y-0 left-0 bg-white/40 rounded-full w-1/3"></div>
+                                        <div id="yt-progress-bar" class="absolute inset-y-0 left-0 bg-yt-red rounded-full w-0"></div>
+                                    </div>
+                                    <div id="yt-scrubber-thumb" class="yt-scrubber-thumb absolute top-1/2 left-0 w-3.5 h-3.5 rounded-full bg-yt-red shadow-md pointer-events-none"></div>
+                                </div>
+
+                                <!-- Bottom Buttons Row -->
+                                <div class="flex items-center justify-between text-white">
+                                    <!-- Left Controls: Play, Next, Volume, Time -->
+                                    <div class="flex items-center gap-2 sm:gap-3">
+                                        <button id="ctrl-play-btn" class="p-1.5 hover:bg-white/15 rounded-full" title="Play/Pause (k)">
+                                            <i id="ctrl-play-icon" data-lucide="pause" class="w-5 h-5 fill-current"></i>
+                                        </button>
+                                        <button id="ctrl-next-btn" class="p-1.5 hover:bg-white/15 rounded-full" title="Next Video">
+                                            <i data-lucide="skip-forward" class="w-4 h-4 fill-current"></i>
+                                        </button>
+                                        <div class="flex items-center gap-1.5">
+                                            <button id="ctrl-mute-btn" class="p-1.5 hover:bg-white/15 rounded-full" title="Mute (m)">
+                                                <i id="ctrl-vol-icon" data-lucide="volume-2" class="w-4 h-4"></i>
+                                            </button>
+                                            <input type="range" id="ctrl-volume-slider" min="0" max="1" step="0.05" value="1" class="hidden sm:block w-16 accent-white cursor-pointer h-1">
+                                        </div>
+                                        <span id="ctrl-time-text" class="text-[11px] sm:text-xs font-mono text-gray-200">0:00 / 0:00</span>
+                                    </div>
+
+                                    <!-- Right Controls: Autoplay, CC, Settings, Mini-Player, Theater, Fullscreen -->
+                                    <div class="flex items-center gap-1 sm:gap-2">
+                                        <button id="ctrl-autoplay-btn" class="px-2 py-1 rounded text-[10px] font-bold bg-white/15 text-emerald-400 hidden sm:inline-flex items-center gap-1" title="Autoplay is ON">
+                                            <span>AUTOPLAY</span>
+                                        </button>
+                                        <button id="ctrl-cc-btn" class="p-1.5 hover:bg-white/15 rounded-lg text-xs font-bold" title="Subtitles/Closed Captions (c)">
+                                            <i data-lucide="captions" class="w-4 h-4"></i>
+                                        </button>
+                                        <button id="ctrl-settings-btn" class="relative p-1.5 hover:bg-white/15 rounded-lg" title="Settings (Quality & Speed)">
+                                            <i data-lucide="settings" class="w-4 h-4"></i>
+                                            <span id="quality-hd-badge" class="absolute -top-0.5 -right-0.5 bg-yt-red text-[8px] font-black px-1 rounded">HD</span>
+                                        </button>
+                                        <button id="ctrl-miniplayer-btn" class="p-1.5 hover:bg-white/15 rounded-lg" title="Miniplayer (i)">
+                                            <i data-lucide="picture-in-picture-2" class="w-4 h-4"></i>
+                                        </button>
+                                        <button id="ctrl-theater-btn" class="hidden lg:inline-flex p-1.5 hover:bg-white/15 rounded-lg" title="Theater mode (t)">
+                                            <i data-lucide="rectangle-horizontal" class="w-4 h-4"></i>
+                                        </button>
+                                        <button id="ctrl-fullscreen-btn" class="p-1.5 hover:bg-white/15 rounded-lg" title="Full screen (f)">
+                                            <i data-lucide="maximize" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video Title -->
+                        <h1 id="player-title" class="text-lg sm:text-[20px] font-bold leading-snug"></h1>
+
+                        <!-- Channel Row & YouTube Pill Action Buttons -->
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                            <!-- Channel Info + Subscribe Pill -->
+                            <div class="flex items-center justify-between md:justify-start gap-3">
+                                <div class="flex items-center gap-3">
+                                    <img id="player-channel-avatar" src="" alt="Channel" class="w-10 h-10 rounded-full object-cover bg-zinc-700">
+                                    <div>
+                                        <div class="flex items-center gap-1">
+                                            <h3 id="player-channel-name" class="font-bold text-[15px]"></h3>
+                                            <i id="player-verified-icon" data-lucide="badge-check" class="w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+                                        </div>
+                                        <p id="player-channel-subs" class="text-xs text-gray-500 dark:text-[#AAAAAA]"></p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2 ml-2">
+                                    <button id="player-subscribe-btn" class="h-9 px-4 rounded-full text-sm font-medium transition-colors"></button>
+                                    <button id="player-bell-btn" class="hidden w-9 h-9 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface flex items-center justify-center">
+                                        <i data-lucide="bell-ring" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Action Pills: Connected Like | Dislike, Share, Thanks (₹), Download, Save -->
+                            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 md:pb-0">
+                                <div class="flex items-center h-9 bg-yt-lightSurface dark:bg-yt-darkSurface rounded-full overflow-hidden shrink-0">
+                                    <button id="player-like-btn" class="h-full flex items-center gap-1.5 px-3.5 hover:bg-yt-lightHover dark:hover:bg-yt-darkHover text-sm font-medium transition-colors">
+                                        <i data-lucide="thumbs-up" class="w-4 h-4"></i>
+                                        <span id="player-like-count">0</span>
+                                    </button>
+                                    <div class="w-[1px] h-5 bg-gray-300 dark:bg-zinc-600"></div>
+                                    <button id="player-dislike-btn" class="h-full px-3 hover:bg-yt-lightHover dark:hover:bg-yt-darkHover transition-colors" title="I dislike this">
+                                        <i data-lucide="thumbs-down" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+
+                                <button id="player-share-btn" class="h-9 flex items-center gap-1.5 px-3.5 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface hover:bg-yt-lightHover dark:hover:bg-yt-darkHover text-sm font-medium shrink-0">
+                                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                                    <span data-i18n="shareBtn">Share</span>
+                                </button>
+
+                                <button id="player-super-thanks-btn" class="h-9 flex items-center gap-1.5 px-3.5 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface hover:bg-amber-500/20 text-sm font-medium shrink-0">
+                                    <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-500"></i>
+                                    <span data-i18n="thanksBtn">Thanks</span>
+                                </button>
+
+                                <button id="player-download-btn" class="h-9 flex items-center gap-1.5 px-3.5 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface hover:bg-yt-lightHover dark:hover:bg-yt-darkHover text-sm font-medium shrink-0">
+                                    <i data-lucide="arrow-down-to-line" class="w-4 h-4"></i>
+                                    <span data-i18n="downloadBtn">Download</span>
+                                </button>
+
+                                <button id="player-watch-later-btn" class="h-9 flex items-center gap-1.5 px-3.5 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface hover:bg-yt-lightHover dark:hover:bg-yt-darkHover text-sm font-medium shrink-0">
+                                    <i data-lucide="bookmark" class="w-4 h-4"></i>
+                                    <span id="player-watch-later-text">Save</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- YouTube Gray Collapsible Description Box -->
+                        <div id="description-box" class="bg-yt-lightSurface dark:bg-yt-darkSurface rounded-xl p-3.5 text-sm cursor-pointer hover:bg-yt-lightHover/80 dark:hover:bg-[#323232] transition-colors">
+                            <div class="flex flex-wrap items-center gap-2 font-bold text-xs sm:text-sm mb-1.5">
+                                <span id="player-views"></span>
+                                <span>•</span>
+                                <span id="player-date"></span>
+                                <span id="player-category-badge" class="text-[#065FD4] dark:text-[#3EA6FF]"></span>
+                            </div>
+                            <p id="player-description" class="whitespace-pre-line line-clamp-2 leading-relaxed text-[13px] sm:text-sm"></p>
+                            <button id="toggle-desc-btn" data-i18n="showMore" class="mt-1.5 font-bold text-xs sm:text-sm">...more</button>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="pt-4 space-y-5">
+                            <div class="flex items-center gap-6">
+                                <h3 class="text-lg sm:text-xl font-bold"><span id="comments-count">0</span> <span data-i18n="commentsHeading">Comments</span></h3>
+                                <button id="sort-comments-btn" class="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
+                                    <span id="sort-comments-label">Top comments</span>
+                                </button>
+                            </div>
+
+                            <!-- Add Comment Input -->
+                            <form id="comment-form" class="flex items-start gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#FF9933] via-yt-red to-[#138808] text-white font-bold text-xs flex items-center justify-center shrink-0">IN</div>
+                                <div class="flex-1">
+                                    <input type="text" id="comment-input" placeholder="Add a comment..." required class="w-full bg-transparent border-b border-gray-300 dark:border-zinc-700 focus:border-[#0F0F0F] dark:focus:border-white py-1.5 text-sm focus:outline-none">
+                                    <div class="flex justify-end gap-2 mt-2">
+                                        <button type="button" id="cancel-comment-btn" data-i18n="cancelBtn" class="px-4 py-1.5 rounded-full text-sm font-medium hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">Cancel</button>
+                                        <button type="submit" data-i18n="postCommentBtn" class="px-4 py-1.5 rounded-full text-sm font-medium bg-[#065FD4] dark:bg-[#3EA6FF] text-white dark:text-black font-bold">Comment</button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div id="comments-list" class="space-y-4"></div>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Right Column: Up Next Recommended Videos -->
+                    <div id="watch-secondary-col" class="space-y-3">
+                        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                            <span class="px-3 py-1.5 rounded-lg bg-[#0F0F0F] text-white dark:bg-[#F1F1F1] dark:text-[#0F0F0F] text-xs font-medium shrink-0">All</span>
+                            <span id="upnext-channel-chip" class="px-3 py-1.5 rounded-lg bg-yt-lightSurface dark:bg-yt-darkSurface text-xs font-medium shrink-0">From channel</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-yt-lightSurface dark:bg-yt-darkSurface text-xs font-medium shrink-0">Related</span>
+                        </div>
+                        <div id="up-next-list" class="space-y-2.5"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 3: VERTICAL SHORTS PLAYER (9:16 REEL) -->
+            <div id="shorts-view" class="hidden py-4 px-4 flex flex-col items-center justify-center min-h-[calc(100vh-3.5rem)]">
+                <div class="relative flex items-center gap-4">
+                    <!-- 9:16 Vertical Video Frame -->
+                    <div class="relative w-[320px] sm:w-[370px] h-[570px] sm:h-[650px] rounded-2xl overflow-hidden bg-black shadow-2xl border border-zinc-800">
+                        <video id="shorts-video-player" class="w-full h-full object-cover" loop playsinline></video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30 pointer-events-none"></div>
+
+                        <!-- Top Bar -->
+                        <div class="absolute top-3 inset-x-3 flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-xs text-white text-xs font-bold flex items-center gap-1">
+                                <i data-lucide="zap" class="w-3.5 h-3.5 text-yt-red fill-current"></i> Shorts
+                            </span>
+                            <span id="shorts-live-earn-badge" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold">+₹0.90 Owner Ad</span>
+                        </div>
+
+                        <!-- Bottom Channel & Caption Info -->
+                        <div class="absolute bottom-4 left-3 right-16 text-white space-y-2">
+                            <div class="flex items-center gap-2">
+                                <img id="shorts-avatar" src="" alt="Creator" class="w-9 h-9 rounded-full object-cover border border-white">
+                                <span id="shorts-channel" class="font-bold text-sm truncate"></span>
+                                <button id="shorts-sub-btn" class="px-3 py-1 rounded-full bg-white text-black text-xs font-bold shrink-0">Subscribe</button>
+                            </div>
+                            <p id="shorts-title" class="text-sm leading-snug line-clamp-2"></p>
+                        </div>
+
+                        <!-- Right Floating Action Stack (YouTube Shorts Style) -->
+                        <div class="absolute right-2.5 bottom-5 flex flex-col items-center gap-4 text-white">
+                            <button id="shorts-like-btn" class="flex flex-col items-center gap-1">
+                                <div class="w-11 h-11 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-xs flex items-center justify-center">
+                                    <i data-lucide="thumbs-up" class="w-5 h-5"></i>
+                                </div>
+                                <span id="shorts-likes" class="text-[11px] font-bold">0</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-1">
+                                <div class="w-11 h-11 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-xs flex items-center justify-center">
+                                    <i data-lucide="thumbs-down" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-[11px] font-bold">Dislike</span>
+                            </button>
+                            <button id="shorts-tip-btn" class="flex flex-col items-center gap-1">
+                                <div class="w-11 h-11 rounded-full bg-amber-500 text-black flex items-center justify-center shadow-lg">
+                                    <i data-lucide="indian-rupee" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-[11px] font-bold text-amber-300">₹100</span>
+                            </button>
+                            <button id="shorts-share-btn" class="flex flex-col items-center gap-1">
+                                <div class="w-11 h-11 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-xs flex items-center justify-center">
+                                    <i data-lucide="share-2" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-[11px] font-bold">Share</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Up/Down Navigation Arrows -->
+                    <div class="flex flex-col gap-3">
+                        <button id="shorts-prev-btn" class="w-11 h-11 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface hover:bg-yt-lightHover dark:hover:bg-yt-darkHover flex items-center justify-center shadow-md" title="Previous Short">
+                            <i data-lucide="arrow-up" class="w-5 h-5"></i>
+                        </button>
+                        <button id="shorts-next-btn" class="w-11 h-11 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface hover:bg-yt-lightHover dark:hover:bg-yt-darkHover flex items-center justify-center shadow-md" title="Next Short">
+                            <i data-lucide="arrow-down" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 4: LIVE STREAMING ROOM ('Go Live' + Super Chat ₹) -->
+            <div id="live-view" class="hidden p-4 sm:p-6 max-w-[1600px] mx-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2.5">
+                        <span class="px-2.5 py-1 rounded bg-yt-red text-white text-xs font-black uppercase animate-pulse">● LIVE</span>
+                        <h1 class="text-lg sm:text-xl font-bold">Indian YouTube Live Broadcast Studio</h1>
+                    </div>
+                    <button id="exit-live-btn" class="px-4 py-1.5 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface text-sm font-medium">End Stream</button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Live Video Feed -->
+                    <div class="lg:col-span-2 space-y-3">
+                        <div class="relative aspect-video bg-black rounded-xl overflow-hidden border border-zinc-800">
+                            <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" autoplay loop muted playsinline class="w-full h-full object-cover"></video>
+                            <div class="absolute top-3 left-3 flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded bg-yt-red text-white text-xs font-bold">LIVE</span>
+                                <span class="px-2.5 py-0.5 rounded bg-black/70 text-white text-xs font-medium">👁 18,420 watching now</span>
+                            </div>
+                        </div>
+                        <h2 class="text-lg font-bold">🔴 LIVE: Indian YouTube Mega Launch & Creator Townhall 🇮🇳</h2>
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-[#AAAAAA]">All Super Chat contributions during this live broadcast go 100% into your Owner Wallet.</p>
+                    </div>
+
+                    <!-- Real-Time Live Chat & Super Chat Box -->
+                    <div class="bg-white dark:bg-[#181818] border border-gray-200 dark:border-zinc-800 rounded-2xl flex flex-col h-[500px] overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between">
+                            <span class="font-bold text-sm">Top chat</span>
+                            <span class="text-xs text-emerald-500 font-bold">100% Owner Super Chat</span>
+                        </div>
+
+                        <div id="live-chat-messages" class="flex-1 p-3 overflow-y-auto space-y-2.5 text-xs sm:text-sm"></div>
+
+                        <!-- Send Live Chat / Super Chat ₹ -->
+                        <form id="live-chat-form" class="p-3 border-t border-gray-200 dark:border-zinc-800 space-y-2">
+                            <div class="flex gap-2">
+                                <input type="text" id="live-chat-input" placeholder="Say something..." class="flex-1 px-3 py-2 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface text-xs sm:text-sm focus:outline-none">
+                                <button type="submit" class="px-4 py-2 rounded-full bg-yt-red text-white text-xs font-bold">Send</button>
+                            </div>
+                            <div class="flex items-center justify-between gap-1.5">
+                                <span class="text-[11px] text-gray-500">Super Chat:</span>
+                                <div class="flex gap-1.5">
+                                    <button type="button" data-superchat="100" class="superchat-btn px-2.5 py-1 rounded-full bg-sky-500/20 text-sky-400 font-bold text-xs hover:bg-sky-500/30">₹100</button>
+                                    <button type="button" data-superchat="500" class="superchat-btn px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xs hover:bg-amber-500/30">₹500</button>
+                                    <button type="button" data-superchat="1000" class="superchat-btn px-2.5 py-1 rounded-full bg-red-500/20 text-red-400 font-bold text-xs hover:bg-red-500/30">₹1,000</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 5: 100% OWNER STUDIO & INCOME CONTROL DASHBOARD -->
+            <div id="owner-view" class="hidden p-4 sm:p-6 max-w-[1600px] mx-auto space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-200 dark:border-zinc-800">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-500 text-xs font-bold mb-1">
+                            <i data-lucide="crown" class="w-3.5 h-3.5"></i>
+                            <span data-i18n="ownerAuthorityBadge">Indian YouTube • 100% Owner Authority</span>
+                        </div>
+                        <h1 data-i18n="ownerDashboardTitle" class="text-2xl font-bold">Owner Studio & Revenue Control</h1>
+                        <p data-i18n="ownerDashboardSubtitle" class="text-xs sm:text-sm text-gray-500 dark:text-[#AAAAAA]">Complete control over platform income, ad rates, UPI payouts, and channel moderation.</p>
+                    </div>
+                    <button id="back-from-owner-btn" class="self-start sm:self-auto px-4 py-2 rounded-full bg-yt-lightSurface dark:bg-yt-darkSurface text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span data-i18n="backToHome">Back to Home</span>
+                    </button>
+                </div>
+
+                <!-- Revenue KPI Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <div class="p-5 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-md">
+                        <span data-i18n="kpiOwnerBalance" class="text-xs font-bold uppercase opacity-90">Available Owner Balance</span>
+                        <div id="stat-owner-balance" class="text-3xl font-black mt-1.5">₹52,480.00</div>
+                        <p id="stat-split-caption" class="text-xs text-emerald-100 mt-1">Owner Share: 100% of Net Revenue</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-white dark:bg-[#181818] border border-gray-200 dark:border-zinc-800">
+                        <span data-i18n="kpiAdRevenue" class="text-xs font-bold uppercase text-gray-500">Total Ad Revenue</span>
+                        <div id="stat-ad-revenue" class="text-2xl sm:text-3xl font-bold mt-1.5">₹39,280.00</div>
+                        <p id="stat-rpm-caption" class="text-xs text-gray-500 mt-1">Active RPM: ₹180 / 1K views</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-white dark:bg-[#181818] border border-gray-200 dark:border-zinc-800">
+                        <span data-i18n="kpiSuperThanks" class="text-xs font-bold uppercase text-gray-500">Super Thanks & Super Chat</span>
+                        <div id="stat-tips-revenue" class="text-2xl sm:text-3xl font-bold mt-1.5">₹13,200.00</div>
+                        <p data-i18n="kpiTipsSub" class="text-xs text-gray-500 mt-1">Direct viewer payments</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-white dark:bg-[#181818] border border-gray-200 dark:border-zinc-800">
+                        <span data-i18n="kpiTotalViews" class="text-xs font-bold uppercase text-gray-500">Total Platform Views</span>
+                        <div id="stat-total-views" class="text-2xl sm:text-3xl font-bold mt-1.5">14.6M</div>
+                        <p id="stat-video-count" class="text-xs text-gray-500 mt-1">12 active videos</p>
+                    </div>
+                </div>
+
+                <!-- Revenue Rules & UPI Withdrawal -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-white dark:bg-[#181818] border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 space-y-5">
+                        <h2 data-i18n="monetizationRulesTitle" class="text-lg font-bold">Monetization & Income Rules</h2>
+
+                        <div class="p-4 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface space-y-2">
+                            <div class="flex items-center justify-between text-sm font-bold">
+                                <span data-i18n="ownerRevenueShareLabel">Owner Revenue Share</span>
+                                <div>
+                                    <span id="owner-share-label" class="text-emerald-500">Owner: 100%</span>
+                                    <span class="mx-1 text-gray-400">|</span>
+                                    <span id="creator-share-label" class="text-gray-400">Creators: 0%</span>
+                                </div>
+                            </div>
+                            <input type="range" id="revenue-split-slider" min="0" max="100" value="100" class="w-full accent-amber-500 cursor-pointer">
+                            <p data-i18n="revenueSplitHelp" class="text-xs text-gray-500 dark:text-[#AAAAAA]">Keep at 100% so every rupee earned flows directly into your Owner Wallet.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label data-i18n="rpmLabel" class="block text-xs font-bold text-gray-500 mb-1">Ad Rate / RPM (₹ per 1,000 views)</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="rpm-input" value="180" min="10" max="5000" class="w-full px-3 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-sm font-bold focus:outline-none">
+                                    <button id="save-rpm-btn" data-i18n="updateBtn" class="px-4 py-2 rounded-xl bg-yt-red text-white text-xs font-bold">Update</button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 pt-4 sm:pt-0">
+                                <label class="flex items-center justify-between p-3 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface cursor-pointer">
+                                    <span data-i18n="switchVideoAds" class="text-xs font-bold">Video Ads</span>
+                                    <input type="checkbox" id="toggle-ads-switch" checked class="w-4 h-4 accent-emerald-500">
+                                </label>
+                                <label class="flex items-center justify-between p-3 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface cursor-pointer">
+                                    <span data-i18n="switchSuperThanks" class="text-xs font-bold">Super Thanks</span>
+                                    <input type="checkbox" id="toggle-tips-switch" checked class="w-4 h-4 accent-amber-500">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instant UPI / Bank Payout -->
+                    <div class="bg-white dark:bg-[#181818] border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 space-y-4">
+                        <h2 data-i18n="withdrawalTitle" class="text-lg font-bold">Bank / UPI Withdrawal</h2>
+                        <div>
+                            <label data-i18n="upiLabel" class="block text-xs font-bold text-gray-500 mb-1">Owner UPI ID / Bank Account</label>
+                            <input type="text" id="owner-upi-input" value="owner.india@okicici" class="w-full px-3 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-sm font-medium">
+                        </div>
+                        <div>
+                            <label data-i18n="withdrawAmountLabel" class="block text-xs font-bold text-gray-500 mb-1">Amount (₹)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="withdraw-amount-input" placeholder="10000" min="100" class="w-full px-3 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-sm font-bold">
+                                <button type="button" id="withdraw-max-btn" class="px-3 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-xs font-bold">MAX</button>
+                            </div>
+                        </div>
+                        <button id="withdraw-now-btn" data-i18n="withdrawNowBtn" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm">Withdraw to UPI / Bank</button>
+                        <div id="payout-history-list" class="space-y-1.5 max-h-28 overflow-y-auto text-xs"></div>
+                    </div>
+                </div>
+
+                <!-- Content & Channel Moderation Table -->
+                <div class="bg-white dark:bg-[#181818] border border-gray-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+                    <div class="p-4 border-b border-gray-200 dark:border-zinc-800">
+                        <h2 data-i18n="moderationTitle" class="text-base font-bold">Content & Channel Moderation</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-yt-lightSurface dark:bg-yt-darkSurface text-[11px] uppercase text-gray-500">
+                                    <th class="py-2.5 px-4">Video</th>
+                                    <th class="py-2.5 px-4">Channel</th>
+                                    <th class="py-2.5 px-4">Views / ₹ Est.</th>
+                                    <th class="py-2.5 px-4 text-right">Owner Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="owner-videos-tbody" class="divide-y divide-gray-200 dark:divide-zinc-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== FLOATING YOUTUBE MINI-PLAYER (BOTTOM RIGHT) ==================== -->
+    <div id="floating-miniplayer" class="hidden fixed bottom-4 right-4 w-80 bg-[#181818] text-white rounded-xl overflow-hidden shadow-2xl border border-zinc-700 z-50">
+        <div class="relative aspect-video bg-black group">
+            <video id="miniplayer-video" class="w-full h-full object-contain" playsinline></video>
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                <button id="mini-expand-btn" class="p-2 rounded-full bg-black/70 hover:bg-black" title="Expand to Watch Page">
+                    <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                </button>
+                <button id="mini-play-pause-btn" class="p-2.5 rounded-full bg-yt-red text-white">
+                    <i id="mini-play-icon" data-lucide="pause" class="w-4 h-4 fill-current"></i>
+                </button>
+                <button id="mini-close-btn" class="p-2 rounded-full bg-black/70 hover:bg-black" title="Close Miniplayer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+        <div class="px-3 py-2 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+                <p id="mini-title" class="text-xs font-bold truncate"></p>
+                <p id="mini-channel" class="text-[11px] text-gray-400 truncate"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SUPER THANKS MODAL ==================== -->
+    <div id="super-thanks-modal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#212121] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div class="px-5 py-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black flex items-center justify-between">
+                <h2 data-i18n="superThanksModalTitle" class="font-bold text-base">Buy Super Thanks • Indian YouTube</h2>
+                <button id="close-super-thanks-modal" class="p-1 rounded-full hover:bg-black/10"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-5 space-y-4">
+                <p data-i18n="superThanksModalDesc" class="text-xs text-gray-500 dark:text-gray-300">Highlight your comment with a Super Thanks badge. 100% goes to your Owner Wallet.</p>
+                <div class="grid grid-cols-3 gap-3">
+                    <button data-tip="100" class="tip-preset-btn py-2.5 rounded-xl border-2 border-amber-500 bg-amber-500/15 font-bold">₹100</button>
+                    <button data-tip="500" class="tip-preset-btn py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 font-bold">₹500</button>
+                    <button data-tip="1000" class="tip-preset-btn py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 font-bold">₹1,000</button>
+                </div>
+                <input type="text" id="super-thanks-message" placeholder="Great video! 🇮🇳" class="w-full px-3.5 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-sm focus:outline-none">
+                <button id="confirm-super-thanks-btn" class="w-full py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm">Buy & Send ₹100</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== UPLOAD VIDEO MODAL ==================== -->
+    <div id="upload-modal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#212121] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-zinc-700 flex items-center justify-between">
+                <h2 data-i18n="uploadModalTitle" class="text-lg font-bold">Upload videos</h2>
+                <button id="close-upload-modal" class="p-1.5 rounded-full hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="upload-form" class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Title (required)</label>
+                    <input type="text" id="upload-title" required placeholder="Add a title that describes your video" class="w-full px-3.5 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-sm focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">Channel Name</label>
+                        <input type="text" id="upload-channel" required placeholder="Your Channel" class="w-full px-3.5 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-sm focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">Category</label>
+                        <select id="upload-category" class="w-full px-3.5 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-sm focus:outline-none">
+                            <option value="Marathi">Marathi</option>
+                            <option value="Music">Music</option>
+                            <option value="Cricket">Cricket</option>
+                            <option value="News">News</option>
+                            <option value="Tech">Tech</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Gaming">Gaming</option>
+                            <option value="Movies">Movies</option>
+                            <option value="Podcasts">Podcasts</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Thumbnail URL (optional)</label>
+                    <input type="url" id="upload-thumbnail" placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Description</label>
+                    <textarea id="upload-description" rows="2" placeholder="Tell viewers about your video" class="w-full px-3.5 py-2 rounded-xl bg-yt-lightSurface dark:bg-yt-darkSurface text-sm focus:outline-none"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" id="cancel-upload-btn" class="px-4 py-2 rounded-full text-sm font-medium hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-full text-sm font-bold bg-[#065FD4] dark:bg-[#3EA6FF] text-white dark:text-black">Publish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div id="toast-container" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // --- 1. MULTI-LANGUAGE TRANSLATIONS (ENGLISH, MARATHI, HINDI) ---
+        const TRANSLATIONS = {
+            en: {
+                searchPlaceholder: 'Search',
+                ownerStudio: 'Owner Studio',
+                createBtn: 'Create',
+                uploadVideoOption: 'Upload video',
+                goLiveOption: 'Go live',
+                notificationsTitle: 'Notifications',
+                markAllRead: 'Mark all read',
+                navHome: 'Home',
+                navShorts: 'Shorts',
+                navSubscriptions: 'Subscriptions',
+                sidebarYou: 'You',
+                navHistory: 'History',
+                navPlaylists: 'Playlists',
+                navYourVideos: 'Your videos',
+                navWatchLater: 'Watch later',
+                navLiked: 'Liked videos',
+                sidebarSubscriptionsHeader: 'Subscriptions',
+                sidebarExploreHeader: 'Explore',
+                expTrending: 'Trending',
+                expMusic: 'Music',
+                expGaming: 'Gaming',
+                expNews: 'News',
+                expSports: 'Sports & Cricket',
+                sidebarOwnerControl: 'Owner Studio (₹)',
+                emptyTitle: 'No videos found',
+                emptySubtitle: 'Try different keywords or select another category chip.',
+                showAllVideosBtn: 'Show all videos',
+                shareBtn: 'Share',
+                thanksBtn: 'Thanks',
+                downloadBtn: 'Download',
+                saveBtn: 'Save',
+                savedBtn: 'Saved',
+                subscribeBtn: 'Subscribe',
+                subscribedBtn: 'Subscribed',
+                showMore: '...more',
+                showLess: 'Show less',
+                commentsHeading: 'Comments',
+                cancelBtn: 'Cancel',
+                postCommentBtn: 'Comment',
+                ownerAuthorityBadge: 'Indian YouTube • 100% Owner Authority',
+                ownerDashboardTitle: 'Owner Studio & Revenue Control',
+                ownerDashboardSubtitle: 'Complete control over platform income, ad rates, UPI payouts, and channel moderation.',
+                backToHome: 'Back to Home',
+                kpiOwnerBalance: 'Available Owner Balance',
+                kpiAdRevenue: 'Total Ad Revenue',
+                kpiSuperThanks: 'Super Thanks & Super Chat',
+                kpiTipsSub: 'Direct viewer payments',
+                kpiTotalViews: 'Total Platform Views',
+                monetizationRulesTitle: 'Monetization & Income Rules',
+                ownerRevenueShareLabel: 'Owner Revenue Share',
+                revenueSplitHelp: 'Keep at 100% so every rupee earned flows directly into your Owner Wallet.',
+                rpmLabel: 'Ad Rate / RPM (₹ per 1,000 views)',
+                updateBtn: 'Update',
+                switchVideoAds: 'Video Ads',
+                switchSuperThanks: 'Super Thanks',
+                withdrawalTitle: 'Bank / UPI Withdrawal',
+                upiLabel: 'Owner UPI ID / Bank Account',
+                withdrawAmountLabel: 'Amount (₹)',
+                withdrawNowBtn: 'Withdraw to UPI / Bank',
+                moderationTitle: 'Content & Channel Moderation',
+                superThanksModalTitle: 'Buy Super Thanks • Indian YouTube',
+                superThanksModalDesc: 'Highlight your comment with a Super Thanks badge. 100% goes to your Owner Wallet.',
+                uploadModalTitle: 'Upload videos',
+                categories: { All: 'All', Marathi: 'Marathi', Music: 'Music', Cricket: 'Cricket', News: 'News', Tech: 'Tech', Comedy: 'Comedy', Gaming: 'Gaming', Movies: 'Movies', Podcasts: 'Podcasts', Live: 'Live' }
+            },
+            mr: {
+                searchPlaceholder: 'Indian YouTube वर शोधा',
+                ownerStudio: 'मालक स्टुडिओ',
+                createBtn: 'तयार करा',
+                uploadVideoOption: 'व्हिडिओ अपलोड करा',
+                goLiveOption: 'लाईव्ह जा (Go Live)',
+                notificationsTitle: 'सूचना',
+                markAllRead: 'सर्व वाचले',
+                navHome: 'होम',
+                navShorts: 'शॉर्ट्स',
+                navSubscriptions: 'सबस्क्रिप्शन',
+                sidebarYou: 'तुमचे विभाग',
+                navHistory: 'इतिहास',
+                navPlaylists: 'प्लेलिस्ट',
+                navYourVideos: 'तुमचे व्हिडिओ',
+                navWatchLater: 'नंतर पहा',
+                navLiked: 'आवडलेले व्हिडिओ',
+                sidebarSubscriptionsHeader: 'सबस्क्राईब केलेले चॅनेल',
+                sidebarExploreHeader: 'एक्सप्लोर',
+                expTrending: 'ट्रेंडिंग',
+                expMusic: 'संगीत',
+                expGaming: 'गेमिंग',
+                expNews: 'बातम्या',
+                expSports: 'खेळ आणि क्रिकेट',
+                sidebarOwnerControl: 'मालक स्टुडिओ (₹)',
+                emptyTitle: 'कोणतेही व्हिडिओ सापडले नाहीत',
+                emptySubtitle: 'दुसरे शब्द शोधून पहा किंवा दुसरा विभाग निवडा.',
+                showAllVideosBtn: 'सर्व व्हिडिओ दाखवा',
+                shareBtn: 'शेअर',
+                thanksBtn: 'सुपर थँक्स',
+                downloadBtn: 'डाउनलोड',
+                saveBtn: 'जतन करा',
+                savedBtn: 'जतन केले',
+                subscribeBtn: 'सबस्क्राईब करा',
+                subscribedBtn: 'सबस्क्राईब केले',
+                showMore: '...अधिक पहा',
+                showLess: 'कमी पहा',
+                commentsHeading: 'प्रतिक्रिया',
+                cancelBtn: 'रद्द करा',
+                postCommentBtn: 'प्रतिक्रिया द्या',
+                ownerAuthorityBadge: 'Indian YouTube • १००% मालकी हक्क',
+                ownerDashboardTitle: 'मालक स्टुडिओ आणि उत्पन्न नियंत्रण',
+                ownerDashboardSubtitle: 'प्लॅटफॉर्म उत्पन्न, जाहिरात दर, UPI पेमेंट आणि चॅनेल नियंत्रणाचे संपूर्ण अधिकार.',
+                backToHome: 'होमवर परत जा',
+                kpiOwnerBalance: 'उपलब्ध मालक शिल्लक',
+                kpiAdRevenue: 'एकूण जाहिरात उत्पन्न',
+                kpiSuperThanks: 'सुपर थँक्स आणि सुपर चॅट',
+                kpiTipsSub: 'प्रेक्षकांकडून थेट पेमेंट',
+                kpiTotalViews: 'एकूण प्लॅटफॉर्म व्ह्यूज',
+                monetizationRulesTitle: 'कमाई आणि उत्पन्न नियम',
+                ownerRevenueShareLabel: 'मालक उत्पन्न हिस्सा',
+                revenueSplitHelp: '१००% ठेवल्यास प्रत्येक रुपया थेट तुमच्या मालक वॉलेटमध्ये जमा होईल.',
+                rpmLabel: 'जाहिरात दर / RPM (₹ प्रति १,००० व्ह्यूज)',
+                updateBtn: 'अपडेट',
+                switchVideoAds: 'व्हिडिओ जाहिराती',
+                switchSuperThanks: 'सुपर थँक्स',
+                withdrawalTitle: 'बँक / UPI पैसे काढणे',
+                upiLabel: 'मालक UPI ID / बँक खाते',
+                withdrawAmountLabel: 'रक्कम (₹)',
+                withdrawNowBtn: 'UPI / बँकेत पैसे घ्या',
+                moderationTitle: 'व्हिडिओ आणि चॅनेल नियंत्रण',
+                superThanksModalTitle: 'सुपर थँक्स खरेदी करा • Indian YouTube',
+                superThanksModalDesc: 'सुपर थँक्स बॅजसह तुमची प्रतिक्रिया हायलाइट करा. १००% रक्कम मालक वॉलेटमध्ये जमा होते.',
+                uploadModalTitle: 'व्हिडिओ अपलोड करा',
+                categories: { All: 'सर्व', Marathi: 'मराठी', Music: 'संगीत', Cricket: 'क्रिकेट', News: 'बातम्या', Tech: 'टेक', Comedy: 'विनोद', Gaming: 'गेमिंग', Movies: 'चित्रपट', Podcasts: 'पॉडकास्ट', Live: 'लाईव्ह' }
+            },
+            hi: {
+                searchPlaceholder: 'Indian YouTube पर खोजें',
+                ownerStudio: 'ओनर स्टूडियो',
+                createBtn: 'बनाएं',
+                uploadVideoOption: 'वीडियो अपलोड करें',
+                goLiveOption: 'लाइव जाएं (Go Live)',
+                notificationsTitle: 'सूचनाएं',
+                markAllRead: 'सभी पढ़ा हुआ चिह्नित करें',
+                navHome: 'होम',
+                navShorts: 'शॉर्ट्स',
+                navSubscriptions: 'सब्सक्रिप्शन',
+                sidebarYou: 'आपका सेक्शन',
+                navHistory: 'इतिहास',
+                navPlaylists: 'प्लेलिस्ट',
+                navYourVideos: 'आपके वीडियो',
+                navWatchLater: 'बाद में देखें',
+                navLiked: 'पसंद किए गए वीडियो',
+                sidebarSubscriptionsHeader: 'सब्सक्राइब किए गए चैनल',
+                sidebarExploreHeader: 'एक्सप्लोर',
+                expTrending: 'ट्रेंडिंग',
+                expMusic: 'संगीत',
+                expGaming: 'गेमिंग',
+                expNews: 'समाचार',
+                expSports: 'खेल और क्रिकेट',
+                sidebarOwnerControl: 'ओनर स्टूडियो (₹)',
+                emptyTitle: 'कोई वीडियो नहीं मिला',
+                emptySubtitle: 'दूसरे कीवर्ड आज़माएं या कोई अन्य श्रेणी चुनें।',
+                showAllVideosBtn: 'सभी वीडियो दिखाएं',
+                shareBtn: 'शेयर',
+                thanksBtn: 'सुपर थैंक्स',
+                downloadBtn: 'डाउनलोड',
+                saveBtn: 'सेव करें',
+                savedBtn: 'सेव किया गया',
+                subscribeBtn: 'सब्सक्राइब करें',
+                subscribedBtn: 'सब्सक्राइब्ड',
+                showMore: '...और दिखाएं',
+                showLess: 'कम दिखाएं',
+                commentsHeading: 'टिप्पणियां',
+                cancelBtn: 'रद्द करें',
+                postCommentBtn: 'टिप्पणी करें',
+                ownerAuthorityBadge: 'Indian YouTube • १००% मालिकाना हक',
+                ownerDashboardTitle: 'ओनर स्टूडियो और राजस्व नियंत्रण',
+                ownerDashboardSubtitle: 'प्लेटफ़ॉर्म कमाई, विज्ञापन दर, UPI निकासी और चैनल नियंत्रण के पूर्ण अधिकार।',
+                backToHome: 'होम पर वापस जाएं',
+                kpiOwnerBalance: 'उपलब्ध ओनर बैलेंस',
+                kpiAdRevenue: 'कुल विज्ञापन आय',
+                kpiSuperThanks: 'सुपर थैंक्स और सुपर चैट',
+                kpiTipsSub: 'दर्शकों से सीधा भुगतान',
+                kpiTotalViews: 'कुल प्लेटफ़ॉर्म व्यूज',
+                monetizationRulesTitle: 'कमाई और मोनेटाइजेशन नियम',
+                ownerRevenueShareLabel: 'ओनर राजस्व हिस्सा',
+                revenueSplitHelp: '१००% रखने पर कमाया गया हर रुपया सीधे आपके ओनर वॉलेट में जाता है।',
+                rpmLabel: 'विज्ञापन दर / RPM (₹ प्रति १,००० व्यूज)',
+                updateBtn: 'अपडेट',
+                switchVideoAds: 'वीडियो विज्ञापन',
+                switchSuperThanks: 'सुपर थैंक्स',
+                withdrawalTitle: 'बैंक / UPI पैसे निकालें',
+                upiLabel: 'ओनर UPI ID / बैंक खाता',
+                withdrawAmountLabel: 'राशि (₹)',
+                withdrawNowBtn: 'UPI / बैंक में पैसे निकालें',
+                moderationTitle: 'वीडियो और चैनल नियंत्रण',
+                superThanksModalTitle: 'सुपर थैंक्स खरीदें • Indian YouTube',
+                superThanksModalDesc: 'सुपर थैंक्स बैज के साथ अपनी टिप्पणी हाइलाइट करें। १००% राशि ओनर वॉलेट में जाती है।',
+                uploadModalTitle: 'वीडियो अपलोड करें',
+                categories: { All: 'सभी', Marathi: 'मराठी', Music: 'संगीत', Cricket: 'क्रिकेट', News: 'समाचार', Tech: 'टेक', Comedy: 'कॉमेडी', Gaming: 'गेमिंग', Movies: 'फिल्में', Podcasts: 'पॉडकास्ट', Live: 'लाइव' }
+            }
+        };
+
+        const CATEGORIES = ['All', 'Marathi', 'Music', 'Cricket', 'News', 'Tech', 'Comedy', 'Gaming', 'Movies', 'Podcasts', 'Live'];
+        const STORAGE_KEY = 'indian_youtube_exact_v1';
+
+        // --- 2. INITIAL REALISTIC INDIAN YOUTUBE DATASET ---
+        let videos = [
+            {
+                id: 'iy-1',
+                title: 'पुणे ते महाबळेश्वर मान्सून रोड ट्रिप | Sahyadri Monsoon Vlog 4K',
+                channel: 'Marathi Vlogs Official',
+                channelAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80',
+                subscribers: '2.45M',
+                views: 1480000,
+                uploadedAt: '3 hours ago',
+                duration: '14:28',
+                category: 'Marathi',
+                trending: true,
+                monetized: true,
+                isUserUploaded: false,
+                thumbnail: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                likes: 94200,
+                userReaction: null,
+                description: 'सह्याद्रीच्या हिरव्यागार डोंगररांगांमधून पुणे ते महाबळेश्वरचा अविस्मरणीय प्रवास! या व्हिडिओमध्ये धबधबे, स्थानिक खाद्यपदार्थ आणि प्रवासाची संपूर्ण माहिती दिली आहे.\n\n#MarathiVlog #Pune #Mahabaleshwar #IndianYouTube',
+                comments: [
+                    { id: 'c1', author: '@rohan_pune', text: 'अप्रतिम चित्रीकरण दादा! सह्याद्रीचे सौंदर्य खूप छान दाखवले आहे 🚩', time: '1 hour ago', likes: 412, pinned: true },
+                    { id: 'c2', author: '@sneha_kulkarni', text: 'पुढच्या आठवड्यात आम्ही पण जाणार आहोत, खूप उपयुक्त माहिती!', time: '42 mins ago', likes: 89, pinned: false }
+                ]
+            },
+            {
+                id: 'iy-2',
+                title: 'INDIA vs AUSTRALIA Final Over Thriller | Last 6 Balls Full Highlights HD',
+                channel: 'Indian Cricket Central',
+                channelAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=120&q=80',
+                subscribers: '8.92M',
+                views: 4920000,
+                uploadedAt: '5 hours ago',
+                duration: '11:45',
+                category: 'Cricket',
+                trending: true,
+                monetized: true,
+                isUserUploaded: false,
+                thumbnail: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                likes: 385000,
+                userReaction: null,
+                description: 'Relive the electrifying final over finish as India chases down 19 runs in the last 6 deliveries in front of a packed stadium!\n\n#TeamIndia #CricketHighlights #IndianYouTube',
+                comments: [
+                    { id: 'c3', author: '@virat_fanclub_in', text: 'Goosebumps every single time!! Chak De India 🇮🇳🔥', time: '2 hours ago', likes: 1840, pinned: true }
+                ]
+            },
+            {
+                id: 'iy-3',
+                title: 'Kesariya & Marathi Folk Fusion — Coke Studio Bharat Live Session',
+                channel: 'Bharat Music Studio',
+                channelAvatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=120&q=80',
+                subscribers: '12.4M',
+                views: 8340000,
+                uploadedAt: '1 day ago',
+                duration: '06:18',
+                category: 'Music',
+                trending: true,
+                monetized: true,
+                isUserUploaded: false,
+                thumbnail: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                likes: 620000,
+                userReaction: null,
+                description: 'Soulful acoustic fusion blending traditional Maharashtrian dholki rhythms with classical Hindustani vocals.\n\n#IndianMusic #Fusion #IndianYouTube',
+                comments: [
+                    { id: 'c4', author: '@aarav_music', text: 'Listening on loop! Pure magic in headphones 🎧❤️', time: '14 hours ago', likes: 920, pinned: false }
+                ]
+            },
+            {
+                id: 'iy-4',
+                title: 'ISRO Gaganyaan Mission Update 2026 | Complete Technical Breakdown',
+                channel: 'Tech Bharat Explained',
+                channelAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80',
+                subscribers: '3.18M',
+                views: 910000,
+                uploadedAt: '1 day ago',
+                duration: '18:04',
+                category: 'Tech',
+                trending: false,
+                monetized: true,
+                isUserUploaded: false,
+                thumbnail: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+                likes: 74500,
+                userReaction: null,
+                description: 'Deep dive into ISRO crew module testing, life-support systems, and India’s upcoming human spaceflight milestone.\n\n#ISRO #Gaganyaan #TechIndia',
+                comments: []
+            },
+            {
+                id: 'iy-5',
+                title: 'Puneri Misal vs Kolhapuri Misal — Ultimate Maharashtrian Food Battle!',
+                channel: 'Marathi Vlogs Official',
+                channelAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80',
+                subscribers: '2.45M',
+                views: 645000,
+                uploadedAt: '2 days ago',
+                duration: '12:52',
+                category: 'Comedy',
+                trending: false,
+                monetized: true,
+                isUserUploaded: false,
+                thumbnail: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                likes: 51200,
+                userReaction: null,
+                description: 'पुणे आणि कोल्हापूरच्या खवय्यांचा मजेदार संवाद आणि झणझणीत मिसळ टेस्टिंग!\n\n#PuneriMisal #KolhapuriMisal #MarathiComedy',
+                comments: []
+            },
+            {
+                id: 'iy-6',
+                title: '🔴 LIVE: Mumbai & Pune Breaking News Headlines | 24x7 Bharat News',
+                channel: 'Bharat 24 News',
+                channelAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=120&q=80',
+                subscribers: '5.60M',
+                views: 312000,
+                uploadedAt: 'LIVE',
+                duration: 'LIVE',
+                category: 'Live',
+                trending: true,
+                monetized: true,
+                isUserUploaded: false,
+                thumbnail: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                likes: 18400,
+                userReaction: null,
+                description: 'Live 24x7 news coverage from Mumbai, Pune, Delhi, and across India.',
+                comments: []
+            },
+            {
+                id: 'iy-7',
+                title: 'BGMI India Pro League Grand Finals — Clutch 1v4 Finish!',
+                channel: 'Desi Gaming Arena',
+                channelAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80',
+                subscribers: '4.12M',
+                views: 1190000,
+                uploadedAt: '3 days ago',
+                duration: '22:15',
+                category: 'Gaming',
+                trending: false,
+                monetized: true,
+                isUserUploaded: false,
+                thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoy.mp4',
+                likes: 88300,
+                userReaction: null,
+                description: 'Insane final zone 1v4 clutch at the Indian Esports Championship!',
+                comments: []
+            },
+            {
+                id: 'iy-8',
+                title: 'How Indian Startups Are Building Global AI Products from Pune & Bengaluru',
+                channel: 'The Bharat Podcast',
+                channelAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80',
+                subscribers: '1.85M',
+                views: 428000,
+                uploadedAt: '4 days ago',
+                duration: '48:30',
+                category: 'Podcasts',
+                trending: false,
+                monetized: true,
+                isUserUploaded: false,
+                thumbnail: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?auto=format&fit=crop&w=800&q=80',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
+                likes: 31900,
+                userReaction: null,
+                description: 'Founders discuss building world-class software platforms in India.',
+                comments: []
+            }
+        ];
+
+        // --- 3. APPLICATION STATE ---
+        let state = {
+            lang: 'en',
+            sidebarCollapsed: false,
+            currentNav: 'home',
+            selectedCategory: 'All',
+            searchQuery: '',
+            activeVideoId: null,
+            shortIndex: 0,
+            isTheaterMode: false,
+            isMiniPlayerActive: false,
+            selectedTipAmount: 100,
+            subscribedChannels: new Set(['Marathi Vlogs Official', 'Indian Cricket Central', 'Bharat Music Studio']),
+            watchLaterIds: new Set(['iy-4']),
+            historyIds: ['iy-1', 'iy-2'],
+            notifications: [
+                { id: 'n1', text: 'Marathi Vlogs Official uploaded: पुणे ते महाबळेश्वर मान्सून रोड ट्रिप', time: '3h ago', unread: true },
+                { id: 'n2', text: 'Owner Wallet: +₹1,450 ad revenue credited today', time: '5h ago', unread: true },
+                { id: 'n3', text: 'Indian Cricket Central is trending #1 in India', time: '7h ago', unread: true }
+            ],
+            ownerControl: {
+                walletBalance: 52480.00,
+                adRevenue: 39280.00,
+                tipsRevenue: 13200.00,
+                ownerSharePercent: 100,
+                rpmInr: 180,
+                adsEnabled: true,
+                tipsEnabled: true,
+                verifiedChannels: new Set(['Marathi Vlogs Official', 'Indian Cricket Central', 'Bharat Music Studio', 'Tech Bharat Explained']),
+                bannedChannels: new Set(),
+                payoutHistory: [
+                    { id: 'tx1', amount: 15000, upi: 'owner.india@okicici', date: '15 Nov 2026' },
+                    { id: 'tx2', amount: 22000, upi: 'owner.india@okicici', date: '02 Nov 2026' }
+                ]
+            }
+        };
+
+        // --- 4. PERSISTENCE HELPERS ---
+        function loadPersistedState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const saved = JSON.parse(raw);
+                if (saved.lang && TRANSLATIONS[saved.lang]) state.lang = saved.lang;
+                if (Array.isArray(saved.videos) && saved.videos.length) videos = saved.videos;
+                if (saved.subscribedChannels) state.subscribedChannels = new Set(saved.subscribedChannels);
+                if (saved.watchLaterIds) state.watchLaterIds = new Set(saved.watchLaterIds);
+                if (saved.historyIds) state.historyIds = saved.historyIds;
+                if (saved.ownerControl) {
+                    Object.assign(state.ownerControl, saved.ownerControl);
+                    state.ownerControl.verifiedChannels = new Set(saved.ownerControl.verifiedChannels || []);
+                    state.ownerControl.bannedChannels = new Set(saved.ownerControl.bannedChannels || []);
+                }
+            } catch (e) {}
+        }
+
+        function savePersistedState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    lang: state.lang,
+                    videos,
+                    subscribedChannels: Array.from(state.subscribedChannels),
+                    watchLaterIds: Array.from(state.watchLaterIds),
+                    historyIds: state.historyIds,
+                    ownerControl: {
+                        ...state.ownerControl,
+                        verifiedChannels: Array.from(state.ownerControl.verifiedChannels),
+                        bannedChannels: Array.from(state.ownerControl.bannedChannels)
+                    }
+                }));
+            } catch (e) {}
+        }
+
+        function t(key) {
+            return (TRANSLATIONS[state.lang] && TRANSLATIONS[state.lang][key]) || TRANSLATIONS.en[key] || key;
+        }
+
+        function formatViews(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+            return num.toString();
+        }
+
+        function formatSeconds(sec) {
+            if (!sec || isNaN(sec)) return '0:00';
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${m}:${s < 10 ? '0' + s : s}`;
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            el.className = 'bg-[#212121] text-white text-xs sm:text-sm px-4 py-2.5 rounded-lg shadow-xl border border-zinc-700 transition-all';
+            el.textContent = msg;
+            container.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 250);
+            }, 2800);
+        }
+
+        // --- 5. LANGUAGE APPLICATION ---
+        function applyLanguageUI() {
+            const pack = TRANSLATIONS[state.lang] || TRANSLATIONS.en;
+            document.getElementById('language-selector').value = state.lang;
+            const mobSel = document.getElementById('mobile-language-selector');
+            if (mobSel) mobSel.value = state.lang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if (pack[k]) el.textContent = pack[k];
+            });
+
+            document.getElementById('search-input').placeholder = pack.searchPlaceholder;
+            renderCategoryPills();
+            renderVideoGrid();
+            if (state.activeVideoId) {
+                const v = videos.find(x => x.id === state.activeVideoId);
+                if (v) updateWatchActionStates(v);
+            }
+            if (!document.getElementById('owner-view').classList.contains('hidden')) {
+                renderOwnerDashboard();
+            }
+        }
+
+        // --- 6. NAVIGATION & VIEW SWITCHING ---
+        function hideAllViews() {
+            ['feed-view', 'watch-view', 'shorts-view', 'live-view', 'owner-view'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById('shorts-video-player').pause();
+        }
+
+        function switchToFeed(nav = 'home') {
+            state.currentNav = nav;
+            hideAllViews();
+            document.getElementById('feed-view').classList.remove('hidden');
+
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                const active = btn.dataset.nav === nav;
+                btn.className = active
+                    ? 'nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-medium bg-yt-lightSurface dark:bg-yt-darkSurface'
+                    : 'nav-item w-full flex items-center gap-5 px-3 h-10 rounded-xl text-sm font-normal hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface';
+            });
+
+            renderVideoGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Sidebar Collapse (Full 240px <-> Compact 72px Mini-Rail on Desktop, Drawer on Mobile)
+        document.getElementById('menu-toggle-btn').addEventListener('click', () => {
+            const isDesktop = window.innerWidth >= 1024;
+            const fullSidebar = document.getElementById('sidebar-full');
+            const miniSidebar = document.getElementById('sidebar-mini');
+            const mainContent = document.getElementById('main-content');
+            const backdrop = document.getElementById('sidebar-backdrop');
+
+            if (isDesktop) {
+                state.sidebarCollapsed = !state.sidebarCollapsed;
+                if (state.sidebarCollapsed) {
+                    fullSidebar.classList.add('lg:-translate-x-full');
+                    fullSidebar.classList.remove('lg:translate-x-0');
+                    miniSidebar.classList.remove('hidden');
+                    miniSidebar.classList.add('lg:flex');
+                    mainContent.classList.remove('lg:pl-60');
+                    mainContent.classList.add('lg:pl-[72px]');
+                } else {
+                    fullSidebar.classList.remove('lg:-translate-x-full');
+                    fullSidebar.classList.add('lg:translate-x-0');
+                    miniSidebar.classList.add('hidden');
+                    miniSidebar.classList.remove('lg:flex');
+                    mainContent.classList.add('lg:pl-60');
+                    mainContent.classList.remove('lg:pl-[72px]');
+                }
+            } else {
+                const isOpen = !fullSidebar.classList.contains('-translate-x-full');
+                if (isOpen) {
+                    fullSidebar.classList.add('-translate-x-full');
+                    backdrop.classList.add('hidden');
+                } else {
+                    fullSidebar.classList.remove('-translate-x-full');
+                    backdrop.classList.remove('hidden');
+                }
+            }
+        });
+
+        document.getElementById('sidebar-backdrop').addEventListener('click', () => {
+            document.getElementById('sidebar-full').classList.add('-translate-x-full');
+            document.getElementById('sidebar-backdrop').classList.add('hidden');
+        });
+
+        // --- 7. RENDER HOME FEED, CHIPS & SIDEBAR SUBSCRIPTIONS ---
+        function renderCategoryPills() {
+            const catMap = (TRANSLATIONS[state.lang] && TRANSLATIONS[state.lang].categories) || TRANSLATIONS.en.categories;
+            const container = document.getElementById('category-pills');
+            container.innerHTML = CATEGORIES.map(cat => {
+                const active = state.selectedCategory === cat;
+                const cls = active
+                    ? 'bg-[#0F0F0F] text-white dark:bg-[#F1F1F1] dark:text-[#0F0F0F] font-medium'
+                    : 'bg-yt-lightSurface text-[#0F0F0F] hover:bg-yt-lightHover dark:bg-yt-darkSurface dark:text-[#F1F1F1] dark:hover:bg-yt-darkHover font-medium';
+                return `<button data-cat="${cat}" class="cat-chip h-8 px-3 rounded-lg text-sm whitespace-nowrap transition-colors ${cls}">${catMap[cat] || cat}</button>`;
+            }).join('');
+
+            container.querySelectorAll('.cat-chip').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.selectedCategory = btn.dataset.cat;
+                    renderCategoryPills();
+                    renderVideoGrid();
+                });
+            });
+        }
+
+        function renderSidebarSubscriptions() {
+            const list = document.getElementById('sidebar-subscriptions-list');
+            const subs = Array.from(state.subscribedChannels);
+            document.getElementById('watch-later-badge').textContent = state.watchLaterIds.size;
+
+            list.innerHTML = subs.map((ch, idx) => {
+                const vid = videos.find(v => v.channel === ch);
+                const avatar = vid ? vid.channelAvatar : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80';
+                const isLive = idx === 0;
+                return `
+                    <button data-sub-channel="${ch}" class="sub-filter-btn w-full flex items-center justify-between px-3 h-10 rounded-xl text-sm hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface">
+                        <div class="flex items-center gap-4 min-w-0">
+                            <img src="${avatar}" alt="${ch}" class="w-6 h-6 rounded-full object-cover shrink-0">
+                            <span class="truncate">${ch}</span>
+                        </div>
+                        ${isLive ? '<span class="w-1.5 h-1.5 rounded-full bg-[#3EA6FF] shrink-0"></span>' : ''}
+                    </button>
+                `;
+            }).join('');
+
+            list.querySelectorAll('.sub-filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.searchQuery = btn.dataset.subChannel;
+                    document.getElementById('search-input').value = state.searchQuery;
+                    switchToFeed('home');
+                });
+            });
+        }
+
+        function renderVideoGrid() {
+            const grid = document.getElementById('video-grid');
+            const empty = document.getElementById('empty-state');
+            const secHeader = document.getElementById('section-header');
+
+            let filtered = videos.filter(v => !state.ownerControl.bannedChannels.has(v.channel));
+
+            if (state.currentNav === 'trending') filtered = filtered.filter(v => v.trending);
+            else if (state.currentNav === 'subscriptions') filtered = filtered.filter(v => state.subscribedChannels.has(v.channel));
+            else if (state.currentNav === 'watch-later') filtered = filtered.filter(v => state.watchLaterIds.has(v.id));
+            else if (state.currentNav === 'liked') filtered = filtered.filter(v => v.userReaction === 'like');
+            else if (state.currentNav === 'your-videos') filtered = filtered.filter(v => v.isUserUploaded);
+            else if (state.currentNav === 'history') {
+                filtered = state.historyIds.map(id => filtered.find(v => v.id === id)).filter(Boolean);
+            }
+
+            if (state.selectedCategory !== 'All') {
+                filtered = filtered.filter(v => v.category === state.selectedCategory);
+            }
+
+            if (state.searchQuery.trim()) {
+                const q = state.searchQuery.toLowerCase();
+                filtered = filtered.filter(v =>
+                    v.title.toLowerCase().includes(q) ||
+                    v.channel.toLowerCase().includes(q) ||
+                    v.category.toLowerCase().includes(q)
+                );
+            }
+
+            if (state.currentNav === 'home') {
+                secHeader.classList.add('hidden');
+            } else {
+                secHeader.classList.remove('hidden');
+                document.getElementById('section-title').textContent = state.currentNav.replace('-', ' ').toUpperCase();
+                document.getElementById('section-subtitle').textContent = `${filtered.length} videos`;
+            }
+
+            if (!filtered.length) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                empty.classList.add('flex');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            empty.classList.remove('flex');
+
+            grid.innerHTML = filtered.map(v => {
+                const isVerified = state.ownerControl.verifiedChannels.has(v.channel);
+                const isLive = v.duration === 'LIVE';
+                return `
+                    <article data-video-id="${v.id}" class="video-card group cursor-pointer flex flex-col gap-3">
+                        <!-- 16:9 Thumbnail -->
+                        <div class="relative aspect-video w-full rounded-xl overflow-hidden bg-zinc-800">
+                            <img src="${v.thumbnail}" alt="${v.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <span class="absolute bottom-2 right-2 px-1.5 py-0.5 rounded-[4px] text-xs font-bold ${isLive ? 'bg-yt-red text-white' : 'bg-black/80 text-white'}">
+                                ${isLive ? '● LIVE' : v.duration}
+                            </span>
+                        </div>
+
+                        <!-- Metadata Row -->
+                        <div class="flex items-start gap-3 pr-1">
+                            <img src="${v.channelAvatar}" alt="${v.channel}" class="w-9 h-9 rounded-full object-cover shrink-0 mt-0.5 bg-zinc-700">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-[15px] leading-[1.35] line-clamp-2 group-hover:text-yt-red transition-colors">${v.title}</h3>
+                                <div class="mt-1 text-xs sm:text-[13px] text-gray-600 dark:text-[#AAAAAA] flex items-center gap-1">
+                                    <span class="truncate hover:text-black dark:hover:text-white">${v.channel}</span>
+                                    ${isVerified ? '<i data-lucide="badge-check" class="w-3.5 h-3.5 shrink-0"></i>' : ''}
+                                </div>
+                                <p class="text-xs sm:text-[13px] text-gray-600 dark:text-[#AAAAAA]">
+                                    ${formatViews(v.views)} views • ${v.uploadedAt}
+                                </p>
+                            </div>
+                            <button data-save-id="${v.id}" class="card-save-btn p-1.5 rounded-full hover:bg-yt-lightSurface dark:hover:bg-yt-darkSurface opacity-80 hover:opacity-100 shrink-0" title="Save to Watch Later">
+                                <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+
+            grid.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.card-save-btn')) return;
+                    openWatchPage(card.dataset.videoId);
+                });
+            });
+
+            grid.querySelectorAll('.card-save-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.dataset.saveId;
+                    if (state.watchLaterIds.has(id)) {
+                        state.watchLaterIds.delete(id);
+                        showToast('Removed from Watch later');
+                    } else {
+                        state.watchLaterIds.add(id);
+                        showToast('Saved to Watch later');
+                    }
+                    renderSidebarSubscriptions();
+                    savePersistedState();
+                });
+            });
+        }
+
+        // --- 8. CUSTOM YOUTUBE WATCH PAGE & VIDEO PLAYER ENGINE ---
+        const player = document.getElementById('main-video-player');
+        let adTimerInterval = null;
+
+        function openWatchPage(videoId) {
+            const video = videos.find(v => v.id === videoId);
+            if (!video) return;
+
+            state.activeVideoId = video.id;
+            video.views += 1;
+
+            // Update Watch History
+            state.historyIds = [video.id, ...state.historyIds.filter(id => id !== video.id)].slice(0, 30);
+
+            // Close Miniplayer if open
+            document.getElementById('floating-miniplayer').classList.add('hidden');
+            document.getElementById('miniplayer-video').pause();
+            state.isMiniPlayerActive = false;
+
+            hideAllViews();
+            document.getElementById('watch-view').classList.remove('hidden');
+
+            // Load video source
+            player.src = video.videoUrl;
+            player.play().catch(() => {});
+            updatePlayPauseButton(true);
+
+            // Trigger Pre-Roll Ad if Monetized & Owner Ads Enabled
+            triggerPreRollAd(video);
+
+            // Populate Metadata
+            document.getElementById('player-title').textContent = video.title;
+            document.getElementById('player-channel-avatar').src = video.channelAvatar;
+            document.getElementById('player-channel-name').textContent = video.channel;
+            document.getElementById('player-channel-subs').textContent = `${video.subscribers} subscribers`;
+            document.getElementById('player-views').textContent = `${video.views.toLocaleString('en-IN')} views`;
+            document.getElementById('player-date').textContent = video.uploadedAt;
+            document.getElementById('player-category-badge').textContent = `#${video.category}`;
+            document.getElementById('player-description').textContent = video.description;
+            document.getElementById('upnext-channel-chip').textContent = `From ${video.channel}`;
+
+            updateWatchActionStates(video);
+            renderComments(video);
+            renderUpNext(video.id);
+            savePersistedState();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function triggerPreRollAd(video) {
+            const adOverlay = document.getElementById('preroll-ad-overlay');
+            const skipBtn = document.getElementById('skip-ad-btn');
+            const skipLabel = document.getElementById('skip-ad-label');
+            clearInterval(adTimerInterval);
+
+            if (!state.ownerControl.adsEnabled || !video.monetized) {
+                adOverlay.classList.add('hidden');
+                return;
+            }
+
+            // Credit Owner Wallet live
+            const rawEarned = Math.max(1.25, (state.ownerControl.rpmInr / 100));
+            const ownerCut = +(rawEarned * (state.ownerControl.ownerSharePercent / 100)).toFixed(2);
+            state.ownerControl.adRevenue = +(state.ownerControl.adRevenue + ownerCut).toFixed(2);
+            state.ownerControl.walletBalance = +(state.ownerControl.walletBalance + ownerCut).toFixed(2);
+            updateHeaderWalletBadge();
+
+            document.getElementById('ad-owner-credit-pill').textContent = `+₹${ownerCut.toFixed(2)} credited to Owner Wallet`;
+            adOverlay.classList.remove('hidden');
+
+            let countdown = 3;
+            skipLabel.textContent = `Skip Ad in ${countdown}s`;
+            skipBtn.disabled = true;
+
+            adTimerInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    skipLabel.textContent = `Skip Ad in ${countdown}s`;
+                } else {
+                    clearInterval(adTimerInterval);
+                    skipLabel.textContent = 'Skip Ad';
+                    skipBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        document.getElementById('skip-ad-btn').addEventListener('click', () => {
+            clearInterval(adTimerInterval);
+            document.getElementById('preroll-ad-overlay').classList.add('hidden');
+        });
+
+        function updateWatchActionStates(video) {
+            const subBtn = document.getElementById('player-subscribe-btn');
+            const bellBtn = document.getElementById('player-bell-btn');
+            const isSub = state.subscribedChannels.has(video.channel);
+
+            if (isSub) {
+                subBtn.textContent = t('subscribedBtn');
+                subBtn.className = 'h-9 px-4 rounded-full text-sm font-medium bg-yt-lightSurface dark:bg-yt-darkSurface hover:bg-yt-lightHover dark:hover:bg-yt-darkHover';
+                bellBtn.classList.remove('hidden');
+            } else {
+                subBtn.textContent = t('subscribeBtn');
+                subBtn.className = 'h-9 px-4 rounded-full text-sm font-medium bg-[#0F0F0F] text-white dark:bg-[#F1F1F1] dark:text-[#0F0F0F] hover:opacity-90';
+                bellBtn.classList.add('hidden');
+            }
+
+            document.getElementById('player-like-count').textContent = formatViews(video.likes);
+            const likeBtn = document.getElementById('player-like-btn');
+            const dislikeBtn = document.getElementById('player-dislike-btn');
+            likeBtn.classList.toggle('text-[#065FD4]', video.userReaction === 'like');
+            likeBtn.classList.toggle('dark:text-[#3EA6FF]', video.userReaction === 'like');
+            dislikeBtn.classList.toggle('text-yt-red', video.userReaction === 'dislike');
+
+            document.getElementById('player-watch-later-text').textContent = state.watchLaterIds.has(video.id) ? t('savedBtn') : t('saveBtn');
+        }
+
+        // Custom Player Controls Wiring
+        function updatePlayPauseButton(playing) {
+            const icon = document.getElementById('ctrl-play-icon');
+            icon.setAttribute('data-lucide', playing ? 'pause' : 'play');
+            lucide.createIcons();
+        }
+
+        document.getElementById('ctrl-play-btn').addEventListener('click', () => {
+            if (player.paused) { player.play(); updatePlayPauseButton(true); }
+            else { player.pause(); updatePlayPauseButton(false); }
+        });
+
+        player.addEventListener('click', () => {
+            if (player.paused) { player.play(); updatePlayPauseButton(true); }
+            else { player.pause(); updatePlayPauseButton(false); }
+        });
+
+        player.addEventListener('timeupdate', () => {
+            const pct = player.duration ? (player.currentTime / player.duration) * 100 : 0;
+            document.getElementById('yt-progress-bar').style.width = `${pct}%`;
+            document.getElementById('yt-scrubber-thumb').style.left = `${pct}%`;
+            document.getElementById('ctrl-time-text').textContent = `${formatSeconds(player.currentTime)} / ${formatSeconds(player.duration)}`;
+        });
+
+        document.getElementById('yt-scrubber').addEventListener('click', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+            if (player.duration) player.currentTime = ratio * player.duration;
+        });
+
+        document.getElementById('ctrl-volume-slider').addEventListener('input', (e) => {
+            player.volume = e.target.value;
+            player.muted = player.volume == 0;
+        });
+
+        document.getElementById('ctrl-mute-btn').addEventListener('click', () => {
+            player.muted = !player.muted;
+            document.getElementById('ctrl-vol-icon').setAttribute('data-lucide', player.muted ? 'volume-x' : 'volume-2');
+            lucide.createIcons();
+        });
+
+        document.getElementById('ctrl-cc-btn').addEventListener('click', () => {
+            const cc = document.getElementById('player-cc-overlay');
+            cc.classList.toggle('hidden');
+            showToast(cc.classList.contains('hidden') ? 'Captions OFF' : 'Captions ON (English / Marathi)');
+        });
+
+        document.getElementById('ctrl-settings-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('player-settings-menu').classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.speed-opt').forEach(btn => {
+            btn.addEventListener('click', () => {
+                player.playbackRate = Number(btn.dataset.speed);
+                document.querySelectorAll('.speed-opt').forEach(b => b.classList.remove('bg-yt-red', 'font-bold'));
+                btn.classList.add('bg-yt-red', 'font-bold');
+                showToast(`Playback speed: ${btn.dataset.speed}x`);
+            });
+        });
+
+        document.querySelectorAll('.quality-opt').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const q = btn.dataset.quality;
+                document.querySelectorAll('.quality-opt').forEach(b => b.classList.remove('bg-white/10', 'font-bold'));
+                btn.classList.add('bg-white/10', 'font-bold');
+                document.getElementById('quality-hd-badge').textContent = q.includes('1080') ? 'HD' : q.replace('p', '');
+                document.getElementById('player-settings-menu').classList.add('hidden');
+                showToast(`Video quality set to ${q}`);
+            });
+        });
+
+        // Theater Mode
+        document.getElementById('ctrl-theater-btn').addEventListener('click', () => {
+            state.isTheaterMode = !state.isTheaterMode;
+            const primary = document.getElementById('watch-primary-col');
+            if (state.isTheaterMode) {
+                primary.classList.remove('lg:col-span-2');
+                primary.classList.add('lg:col-span-3');
+            } else {
+                primary.classList.add('lg:col-span-2');
+                primary.classList.remove('lg:col-span-3');
+            }
+        });
+
+        // Fullscreen
+        document.getElementById('ctrl-fullscreen-btn').addEventListener('click', () => {
+            const wrapper = document.getElementById('yt-player-wrapper');
+            if (!document.fullscreenElement) wrapper.requestFullscreen().catch(() => {});
+            else document.exitFullscreen().catch(() => {});
+        });
+
+        // Floating Mini-Player (Pop video to bottom-right while browsing Home!)
+        document.getElementById('ctrl-miniplayer-btn').addEventListener('click', () => {
+            const video = videos.find(v => v.id === state.activeVideoId);
+            if (!video) return;
+            const miniVid = document.getElementById('miniplayer-video');
+            miniVid.src = video.videoUrl;
+            miniVid.currentTime = player.currentTime;
+            player.pause();
+            miniVid.play().catch(() => {});
+
+            document.getElementById('mini-title').textContent = video.title;
+            document.getElementById('mini-channel').textContent = video.channel;
+            document.getElementById('floating-miniplayer').classList.remove('hidden');
+            state.isMiniPlayerActive = true;
+            switchToFeed('home');
+            showToast('Miniplayer active');
+        });
+
+        document.getElementById('mini-expand-btn').addEventListener('click', () => {
+            if (state.activeVideoId) openWatchPage(state.activeVideoId);
+        });
+
+        document.getElementById('mini-close-btn').addEventListener('click', () => {
+            document.getElementById('miniplayer-video').pause();
+            document.getElementById('floating-miniplayer').classList.add('hidden');
+            state.isMiniPlayerActive = false;
+        });
+
+        document.getElementById('mini-play-pause-btn').addEventListener('click', () => {
+            const mv = document.getElementById('miniplayer-video');
+            if (mv.paused) mv.play();
+            else mv.pause();
+        });
+
+        // Next Video Button
+        document.getElementById('ctrl-next-btn').addEventListener('click', () => {
+            const idx = videos.findIndex(v => v.id === state.activeVideoId);
+            const nextVid = videos[(idx + 1) % videos.length];
+            if (nextVid) openWatchPage(nextVid.id);
+        });
+
+        // Watch Page Action Listeners (Subscribe, Like, Dislike, Share, Download, Save, Desc)
+        document.getElementById('player-subscribe-btn').addEventListener('click', () => {
+            const v = videos.find(x => x.id === state.activeVideoId);
+            if (!v) return;
+            if (state.subscribedChannels.has(v.channel)) {
+                state.subscribedChannels.delete(v.channel);
+                showToast(`Unsubscribed from ${v.channel}`);
+            } else {
+                state.subscribedChannels.add(v.channel);
+                showToast(`Subscribed to ${v.channel}`);
+            }
+            updateWatchActionStates(v);
+            renderSidebarSubscriptions();
+            savePersistedState();
+        });
+
+        document.getElementById('player-like-btn').addEventListener('click', () => {
+            const v = videos.find(x => x.id === state.activeVideoId);
+            if (!v) return;
+            if (v.userReaction === 'like') { v.userReaction = null; v.likes--; }
+            else { v.userReaction = 'like'; v.likes++; showToast('Added to Liked videos'); }
+            updateWatchActionStates(v);
+            savePersistedState();
+        });
+
+        document.getElementById('player-dislike-btn').addEventListener('click', () => {
+            const v = videos.find(x => x.id === state.activeVideoId);
+            if (!v) return;
+            if (v.userReaction === 'like') v.likes--;
+            v.userReaction = v.userReaction === 'dislike' ? null : 'dislike';
+            updateWatchActionStates(v);
+            savePersistedState();
+        });
+
+        document.getElementById('player-share-btn').addEventListener('click', () => {
+            const url = `https://indianyoutube.in/watch?v=${state.activeVideoId}`;
+            navigator.clipboard?.writeText(url).catch(() => {});
+            showToast('Link copied to clipboard');
+        });
+
+        document.getElementById('player-download-btn').addEventListener('click', () => {
+            showToast('Downloading video for offline playback...');
+        });
+
+        document.getElementById('player-watch-later-btn').addEventListener('click', () => {
+            const v = videos.find(x => x.id === state.activeVideoId);
+            if (!v) return;
+            if (state.watchLaterIds.has(v.id)) {
+                state.watchLaterIds.delete(v.id);
+                showToast('Removed from Watch later');
+            } else {
+                state.watchLaterIds.add(v.id);
+                showToast('Saved to Watch later');
+            }
+            updateWatchActionStates(v);
+            renderSidebarSubscriptions();
+            savePersistedState();
+        });
+
+        document.getElementById('description-box').addEventListener('click', () => {
+            const desc = document.getElementById('player-description');
+            const btn = document.getElementById('toggle-desc-btn');
+            const collapsed = desc.classList.contains('line-clamp-2');
+            desc.classList.toggle('line-clamp-2');
+            btn.textContent = collapsed ? t('showLess') : t('showMore');
+        });
+
+        // Comments Rendering & Owner Pin/Delete
+        function renderComments(video) {
+            document.getElementById('comments-count').textContent = video.comments.length;
+            const sorted = [...video.comments].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+            const list = document.getElementById('comments-list');
+
+            list.innerHTML = sorted.map(c => `
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-full bg-zinc-700 text-white text-xs font-bold flex items-center justify-center shrink-0 uppercase">
+                            ${c.author.replace('@', '').slice(0, 2)}
+                        </div>
+                        <div>
+                            ${c.pinned ? '<div class="text-[11px] font-bold text-gray-500 dark:text-[#AAAAAA] flex items-center gap-1 mb-0.5"><i data-lucide="pin" class="w-3 h-3"></i> Pinned by Indian YouTube</div>' : ''}
+                            <div class="flex items-center gap-2 text-xs">
+                                <span class="font-bold">${c.author}</span>
+                                <span class="text-gray-500">${c.time}</span>
+                            </div>
+                            <p class="text-sm mt-1">${c.text}</p>
+                            <div class="flex items-center gap-4 mt-1.5 text-xs text-gray-500">
+                                <span class="flex items-center gap-1"><i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i> ${c.likes || 0}</span>
+                                <button data-pin-cid="${c.id}" class="pin-comment-btn hover:text-amber-500 font-medium">${c.pinned ? 'Unpin' : 'Pin'}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button data-del-cid="${c.id}" class="del-comment-btn p-1.5 rounded-full hover:bg-red-500/15 text-gray-400 hover:text-yt-red" title="Owner Delete">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+
+            list.querySelectorAll('.pin-comment-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const target = video.comments.find(x => x.id === btn.dataset.pinCid);
+                    if (target) target.pinned = !target.pinned;
+                    renderComments(video);
+                    savePersistedState();
+                });
+            });
+
+            list.querySelectorAll('.del-comment-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    video.comments = video.comments.filter(x => x.id !== btn.dataset.delCid);
+                    renderComments(video);
+                    savePersistedState();
+                    showToast('Comment removed');
+                });
+            });
+        }
+
+        document.getElementById('comment-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('comment-input');
+            const v = videos.find(x => x.id === state.activeVideoId);
+            if (!v || !input.value.trim()) return;
+            v.comments.unshift({
+                id: 'c-' + Date.now(),
+                author: '@IndianYouTube_Owner',
+                text: input.value.trim(),
+                time: 'Just now',
+                likes: 1,
+                pinned: false
+            });
+            input.value = '';
+            renderComments(v);
+            savePersistedState();
+        });
+
+        function renderUpNext(currentId) {
+            const list = document.getElementById('up-next-list');
+            const others = videos.filter(v => v.id !== currentId && !state.ownerControl.bannedChannels.has(v.channel));
+            list.innerHTML = others.map(v => `
+                <div data-upnext-id="${v.id}" class="upnext-item flex gap-2.5 cursor-pointer group">
+                    <div class="relative w-40 aspect-video rounded-lg overflow-hidden bg-zinc-800 shrink-0">
+                        <img src="${v.thumbnail}" alt="${v.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                        <span class="absolute bottom-1 right-1 bg-black/80 text-white text-[10px] font-bold px-1 rounded">${v.duration}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-xs sm:text-[13px] leading-snug line-clamp-2 group-hover:text-yt-red">${v.title}</h4>
+                        <p class="text-[11px] text-gray-500 dark:text-[#AAAAAA] mt-1 truncate">${v.channel}</p>
+                        <p class="text-[11px] text-gray-500 dark:text-[#AAAAAA]">${formatViews(v.views)} views • ${v.uploadedAt}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            list.querySelectorAll('.upnext-item').forEach(el => {
+                el.addEventListener('click', () => openWatchPage(el.dataset.upnextId));
+            });
+        }
+
+        // --- 9. VERTICAL SHORTS PLAYER ---
+        function openShortsView() {
+            hideAllViews();
+            player.pause();
+            document.getElementById('shorts-view').classList.remove('hidden');
+            renderActiveShort();
+        }
+
+        function renderActiveShort() {
+            const v = videos[state.shortIndex % videos.length];
+            const sv = document.getElementById('shorts-video-player');
+            sv.src = v.videoUrl;
+            sv.play().catch(() => {});
+
+            document.getElementById('shorts-avatar').src = v.channelAvatar;
+            document.getElementById('shorts-channel').textContent = v.channel;
+            document.getElementById('shorts-title').textContent = v.title;
+            document.getElementById('shorts-likes').textContent = formatViews(v.likes);
+
+            if (state.ownerControl.adsEnabled) {
+                const earned = +(0.90 * (state.ownerControl.ownerSharePercent / 100)).toFixed(2);
+                state.ownerControl.adRevenue = +(state.ownerControl.adRevenue + earned).toFixed(2);
+                state.ownerControl.walletBalance = +(state.ownerControl.walletBalance + earned).toFixed(2);
+                updateHeaderWalletBadge();
+                document.getElementById('shorts-live-earn-badge').textContent = `+₹${earned.toFixed(2)} Owner Ad`;
+            }
+        }
+
+        document.getElementById('shorts-next-btn').addEventListener('click', () => {
+            state.shortIndex = (state.shortIndex + 1) % videos.length;
+            renderActiveShort();
+        });
+        document.getElementById('shorts-prev-btn').addEventListener('click', () => {
+            state.shortIndex = (state.shortIndex - 1 + videos.length) % videos.length;
+            renderActiveShort();
+        });
+        document.getElementById('shorts-tip-btn').addEventListener('click', () => {
+            creditOwnerTip(100, 'Shorts Super Thanks');
+        });
+
+        // --- 10. LIVE STREAMING & SUPER CHAT ---
+        function openLiveStudio() {
+            hideAllViews();
+            player.pause();
+            document.getElementById('live-view').classList.remove('hidden');
+            const chat = document.getElementById('live-chat-messages');
+            chat.innerHTML = `
+                <div class="text-gray-400">Welcome to live chat! Remember to guard your privacy.</div>
+                <div><strong class="text-amber-400">@Rahul_Mumbai:</strong> Indian YouTube looks exact like YouTube! 🔥🇮🇳</div>
+                <div class="p-2 rounded-lg bg-amber-500/20 border border-amber-500/40"><strong class="text-amber-300">@Sneha_Pune sent ₹500 Super Chat:</strong> Congratulations on launching Indian YouTube!</div>
+            `;
+        }
+
+        document.getElementById('live-chat-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const inp = document.getElementById('live-chat-input');
+            if (!inp.value.trim()) return;
+            const chat = document.getElementById('live-chat-messages');
+            const row = document.createElement('div');
+            row.innerHTML = `<strong class="text-yt-red">@Owner_IN:</strong> ${inp.value.trim()}`;
+            chat.appendChild(row);
+            chat.scrollTop = chat.scrollHeight;
+            inp.value = '';
+        });
+
+        document.querySelectorAll('.superchat-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const amt = Number(btn.dataset.superchat);
+                creditOwnerTip(amt, 'Live Super Chat');
+                const chat = document.getElementById('live-chat-messages');
+                const row = document.createElement('div');
+                row.className = 'p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/40 font-bold';
+                row.textContent = `💰 @Viewer_IN sent ₹${amt} Super Chat → Credited to Owner Wallet!`;
+                chat.appendChild(row);
+                chat.scrollTop = chat.scrollHeight;
+            });
+        });
+
+        document.getElementById('exit-live-btn').addEventListener('click', () => switchToFeed('home'));
+
+        // --- 11. OWNER STUDIO & 100% REVENUE CONTROL ---
+        function creditOwnerTip(amount, sourceLabel) {
+            if (!state.ownerControl.tipsEnabled) {
+                showToast('Super Thanks is currently disabled in Owner Studio');
+                return;
+            }
+            const share = +(amount * (state.ownerControl.ownerSharePercent / 100)).toFixed(2);
+            state.ownerControl.tipsRevenue = +(state.ownerControl.tipsRevenue + share).toFixed(2);
+            state.ownerControl.walletBalance = +(state.ownerControl.walletBalance + share).toFixed(2);
+            updateHeaderWalletBadge();
+            savePersistedState();
+            showToast(`₹${share.toLocaleString('en-IN')} (${sourceLabel}) credited to Owner Wallet!`);
+        }
+
+        function updateHeaderWalletBadge() {
+            document.getElementById('header-wallet-badge').textContent = '₹' + Math.floor(state.ownerControl.walletBalance).toLocaleString('en-IN');
+        }
+
+        function openOwnerStudio() {
+            hideAllViews();
+            player.pause();
+            document.getElementById('owner-view').classList.remove('hidden');
+            renderOwnerDashboard();
+        }
+
+        function renderOwnerDashboard() {
+            const oc = state.ownerControl;
+            document.getElementById('stat-owner-balance').textContent = '₹' + oc.walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('stat-ad-revenue').textContent = '₹' + oc.adRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('stat-tips-revenue').textContent = '₹' + oc.tipsRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('stat-split-caption').textContent = `Owner Share: ${oc.ownerSharePercent}% of Net Revenue`;
+            document.getElementById('stat-rpm-caption').textContent = `Active RPM: ₹${oc.rpmInr} / 1K views`;
+
+            const totalViews = videos.reduce((acc, v) => acc + v.views, 0);
+            document.getElementById('stat-total-views').textContent = formatViews(totalViews);
+            document.getElementById('stat-video-count').textContent = `${videos.length} active videos`;
+
+            document.getElementById('revenue-split-slider').value = oc.ownerSharePercent;
+            document.getElementById('owner-share-label').textContent = `Owner: ${oc.ownerSharePercent}%`;
+            document.getElementById('creator-share-label').textContent = `Creators: ${100 - oc.ownerSharePercent}%`;
+            document.getElementById('rpm-input').value = oc.rpmInr;
+            document.getElementById('toggle-ads-switch').checked = oc.adsEnabled;
+            document.getElementById('toggle-tips-switch').checked = oc.tipsEnabled;
+
+            // Payout History
+            document.getElementById('payout-history-list').innerHTML = oc.payoutHistory.map(p => `
+                <div class="flex items-center justify-between p-2 rounded-lg bg-yt-lightSurface dark:bg-yt-darkSurface">
+                    <span class="font-bold text-emerald-500">₹${p.amount.toLocaleString('en-IN')}</span>
+                    <span class="text-gray-400">${p.upi} • ${p.date}</span>
+                </div>
+            `).join('');
+
+            // Content & Channel Moderation Table
+            const tbody = document.getElementById('owner-videos-tbody');
+            tbody.innerHTML = videos.map(v => {
+                const isVer = oc.verifiedChannels.has(v.channel);
+                const isBan = oc.bannedChannels.has(v.channel);
+                const estEarn = ((v.views / 1000) * oc.rpmInr).toFixed(0);
+                return `
+                    <tr>
+                        <td class="py-3 px-4 font-medium max-w-xs truncate">${v.title}</td>
+                        <td class="py-3 px-4 text-xs">
+                            <span>${v.channel}</span>
+                            ${isVer ? '<span class="ml-1 text-emerald-500 font-bold">✓ Verified</span>' : ''}
+                            ${isBan ? '<span class="ml-1 text-yt-red font-bold">BANNED</span>' : ''}
+                        </td>
+                        <td class="py-3 px-4 text-xs font-bold">${formatViews(v.views)} • ₹${Number(estEarn).toLocaleString('en-IN')}</td>
+                        <td class="py-3 px-4 text-right space-x-1">
+                            <button data-act="verify" data-ch="${v.channel}" class="owner-tbl-btn px-2.5 py-1 rounded bg-sky-500/15 text-sky-400 text-xs font-bold">${isVer ? 'Unverify' : 'Verify'}</button>
+                            <button data-act="trend" data-id="${v.id}" class="owner-tbl-btn px-2.5 py-1 rounded bg-amber-500/15 text-amber-400 text-xs font-bold">${v.trending ? '★ Trending' : 'Boost'}</button>
+                            <button data-act="ban" data-ch="${v.channel}" class="owner-tbl-btn px-2.5 py-1 rounded bg-red-500/15 text-yt-red text-xs font-bold">${isBan ? 'Unban' : 'Ban'}</button>
+                            <button data-act="delete" data-id="${v.id}" class="owner-tbl-btn px-2.5 py-1 rounded bg-zinc-700 text-white text-xs font-bold">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.querySelectorAll('.owner-tbl-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const act = btn.dataset.act;
+                    if (act === 'verify') {
+                        const ch = btn.dataset.ch;
+                        oc.verifiedChannels.has(ch) ? oc.verifiedChannels.delete(ch) : oc.verifiedChannels.add(ch);
+                    } else if (act === 'ban') {
+                        const ch = btn.dataset.ch;
+                        oc.bannedChannels.has(ch) ? oc.bannedChannels.delete(ch) : oc.bannedChannels.add(ch);
+                    } else if (act === 'trend') {
+                        const v = videos.find(x => x.id === btn.dataset.id);
+                        if (v) v.trending = !v.trending;
+                    } else if (act === 'delete') {
+                        videos = videos.filter(x => x.id !== btn.dataset.id);
+                    }
+                    savePersistedState();
+                    renderOwnerDashboard();
+                });
+            });
+        }
+
+        document.getElementById('revenue-split-slider').addEventListener('input', (e) => {
+            state.ownerControl.ownerSharePercent = Number(e.target.value);
+            renderOwnerDashboard();
+            savePersistedState();
+        });
+
+        document.getElementById('save-rpm-btn').addEventListener('click', () => {
+            state.ownerControl.rpmInr = Math.max(10, Number(document.getElementById('rpm-input').value) || 180);
+            renderOwnerDashboard();
+            savePersistedState();
+            showToast(`Ad RPM updated to ₹${state.ownerControl.rpmInr}`);
+        });
+
+        document.getElementById('toggle-ads-switch').addEventListener('change', (e) => {
+            state.ownerControl.adsEnabled = e.target.checked;
+            savePersistedState();
+        });
+
+        document.getElementById('toggle-tips-switch').addEventListener('change', (e) => {
+            state.ownerControl.tipsEnabled = e.target.checked;
+            savePersistedState();
+        });
+
+        document.getElementById('withdraw-max-btn').addEventListener('click', () => {
+            document.getElementById('withdraw-amount-input').value = Math.floor(state.ownerControl.walletBalance);
+        });
+
+        document.getElementById('withdraw-now-btn').addEventListener('click', () => {
+            const amt = Number(document.getElementById('withdraw-amount-input').value);
+            const upi = document.getElementById('owner-upi-input').value.trim();
+            if (!amt || amt <= 0 || amt > state.ownerControl.walletBalance) {
+                showToast('Enter a valid withdrawal amount within available balance');
+                return;
+            }
+            state.ownerControl.walletBalance = +(state.ownerControl.walletBalance - amt).toFixed(2);
+            state.ownerControl.payoutHistory.unshift({
+                id: 'tx-' + Date.now(),
+                amount: amt,
+                upi: upi || 'owner.india@okicici',
+                date: 'Just now'
+            });
+            document.getElementById('withdraw-amount-input').value = '';
+            updateHeaderWalletBadge();
+            renderOwnerDashboard();
+            savePersistedState();
+            showToast(`₹${amt.toLocaleString('en-IN')} transferred to ${upi}`);
+        });
+
+        // --- 12. SUPER THANKS MODAL, UPLOAD MODAL, SEARCH, VOICE & NOTIFICATIONS ---
+        document.getElementById('player-super-thanks-btn').addEventListener('click', () => {
+            const m = document.getElementById('super-thanks-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        });
+        document.getElementById('close-super-thanks-modal').addEventListener('click', () => {
+            const m = document.getElementById('super-thanks-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        });
+
+        document.querySelectorAll('.tip-preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.selectedTipAmount = Number(btn.dataset.tip);
+                document.querySelectorAll('.tip-preset-btn').forEach(b => {
+                    b.className = 'tip-preset-btn py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 font-bold';
+                });
+                btn.className = 'tip-preset-btn py-2.5 rounded-xl border-2 border-amber-500 bg-amber-500/15 font-bold';
+                document.getElementById('confirm-super-thanks-btn').textContent = `Buy & Send ₹${state.selectedTipAmount.toLocaleString('en-IN')}`;
+            });
+        });
+
+        document.getElementById('confirm-super-thanks-btn').addEventListener('click', () => {
+            creditOwnerTip(state.selectedTipAmount, 'Super Thanks');
+            const v = videos.find(x => x.id === state.activeVideoId);
+            const msg = document.getElementById('super-thanks-message').value.trim();
+            if (v) {
+                v.comments.unshift({
+                    id: 'st-' + Date.now(),
+                    author: `@Supporter_IN (₹${state.selectedTipAmount} Super Thanks)`,
+                    text: msg || `Sent ₹${state.selectedTipAmount} Super Thanks! 🇮🇳`,
+                    time: 'Just now',
+                    likes: 1,
+                    pinned: true
+                });
+                renderComments(v);
+            }
+            document.getElementById('super-thanks-modal').classList.add('hidden');
+            document.getElementById('super-thanks-modal').classList.remove('flex');
+        });
+
+        // Create Dropdown & Upload Modal
+        document.getElementById('create-menu-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('create-dropdown').classList.toggle('hidden');
+        });
+
+        document.getElementById('open-upload-modal').addEventListener('click', () => {
+            document.getElementById('create-dropdown').classList.add('hidden');
+            const m = document.getElementById('upload-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        });
+
+        document.getElementById('open-live-stream-btn').addEventListener('click', () => {
+            document.getElementById('create-dropdown').classList.add('hidden');
+            openLiveStudio();
+        });
+
+        ['close-upload-modal', 'cancel-upload-btn'].forEach(id => {
+            document.getElementById(id).addEventListener('click', () => {
+                const m = document.getElementById('upload-modal');
+                m.classList.add('hidden');
+                m.classList.remove('flex');
+            });
+        });
+
+        document.getElementById('upload-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('upload-title').value.trim();
+            const channel = document.getElementById('upload-channel').value.trim() || 'Indian YouTube Creator';
+            const category = document.getElementById('upload-category').value;
+            const thumb = document.getElementById('upload-thumbnail').value.trim() || 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80';
+            const desc = document.getElementById('upload-description').value.trim() || 'Published on Indian YouTube.';
+
+            const newVid = {
+                id: 'iy-' + Date.now(),
+                title,
+                channel,
+                channelAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80',
+                subscribers: '100K',
+                views: 1,
+                uploadedAt: 'Just now',
+                duration: '08:15',
+                category,
+                trending: true,
+                monetized: true,
+                isUserUploaded: true,
+                thumbnail: thumb,
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                likes: 1,
+                userReaction: null,
+                description: desc,
+                comments: []
+            };
+
+            videos.unshift(newVid);
+            savePersistedState();
+            const m = document.getElementById('upload-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+            e.target.reset();
+            switchToFeed('home');
+            showToast('Video published on Indian YouTube!');
+        });
+
+        // Search & Voice Search
+        const searchInput = document.getElementById('search-input');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+
+        searchInput.addEventListener('input', () => {
+            state.searchQuery = searchInput.value;
+            clearSearchBtn.classList.toggle('hidden', !state.searchQuery);
+            if (document.getElementById('feed-view').classList.contains('hidden')) switchToFeed('home');
+            else renderVideoGrid();
+        });
+
+        document.getElementById('search-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            state.searchQuery = searchInput.value;
+            switchToFeed('home');
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            state.searchQuery = '';
+            clearSearchBtn.classList.add('hidden');
+            renderVideoGrid();
+        });
+
+        document.getElementById('voice-search-btn').addEventListener('click', () => {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                showToast('Voice search: Listening simulated — try typing in search bar');
+                return;
+            }
+            const rec = new SpeechRec();
+            rec.lang = state.lang === 'mr' ? 'mr-IN' : state.lang === 'hi' ? 'hi-IN' : 'en-IN';
+            showToast('Listening... Speak now');
+            rec.onresult = (event) => {
+                const spoken = event.results[0][0].transcript;
+                searchInput.value = spoken;
+                state.searchQuery = spoken;
+                clearSearchBtn.classList.remove('hidden');
+                switchToFeed('home');
+            };
+            rec.start();
+        });
+
+        // Notifications Dropdown
+        function renderNotifications() {
+            const list = document.getElementById('notifications-list');
+            const unreadCount = state.notifications.filter(n => n.unread).length;
+            const badge = document.getElementById('notif-badge');
+            badge.textContent = unreadCount;
+            badge.classList.toggle('hidden', unreadCount === 0);
+
+            list.innerHTML = state.notifications.map(n => `
+                <div class="px-4 py-3 text-xs sm:text-sm flex items-start gap-3 ${n.unread ? 'bg-blue-500/5' : ''}">
+                    <span class="w-2 h-2 rounded-full mt-1.5 shrink-0 ${n.unread ? 'bg-[#3EA6FF]' : 'bg-transparent'}"></span>
+                    <div>
+                        <p>${n.text}</p>
+                        <span class="text-[11px] text-gray-500">${n.time}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('notifications-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('notifications-dropdown').classList.toggle('hidden');
+        });
+
+        document.getElementById('mark-all-read-btn').addEventListener('click', () => {
+            state.notifications.forEach(n => n.unread = false);
+            renderNotifications();
+        });
+
+        // Theme Toggle
+        document.getElementById('theme-toggle-btn').addEventListener('click', () => {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            document.getElementById('theme-icon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            lucide.createIcons();
+        });
+
+        // Navigation Button Bindings
+        document.getElementById('brand-logo-btn').addEventListener('click', () => {
+            state.selectedCategory = 'All';
+            state.searchQuery = '';
+            searchInput.value = '';
+            renderCategoryPills();
+            switchToFeed('home');
+        });
+
+        document.querySelectorAll('.nav-item, .mini-nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.nav;
+                if (target === 'shorts') openShortsView();
+                else switchToFeed(target);
+            });
+        });
+
+        document.querySelectorAll('.explore-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const exp = btn.dataset.explore;
+                if (exp === 'Trending') {
+                    state.selectedCategory = 'All';
+                    switchToFeed('trending');
+                } else {
+                    state.selectedCategory = exp;
+                    renderCategoryPills();
+                    switchToFeed('home');
+                }
+            });
+        });
+
+        ['open-owner-studio-btn', 'sidebar-owner-btn', 'mini-owner-btn'].forEach(id => {
+            document.getElementById(id).addEventListener('click', openOwnerStudio);
+        });
+
+        document.getElementById('back-from-owner-btn').addEventListener('click', () => switchToFeed('home'));
+
+        document.getElementById('reset-filters-btn').addEventListener('click', () => {
+            state.selectedCategory = 'All';
+            state.searchQuery = '';
+            searchInput.value = '';
+            renderCategoryPills();
+            switchToFeed('home');
+        });
+
+        // Language Change Listeners
+        document.getElementById('language-selector').addEventListener('change', (e) => {
+            state.lang = e.target.value;
+            savePersistedState();
+            applyLanguageUI();
+        });
+        document.getElementById('mobile-language-selector').addEventListener('change', (e) => {
+            state.lang = e.target.value;
+            savePersistedState();
+            applyLanguageUI();
+        });
+
+        // Close popovers on outside click
+        document.addEventListener('click', () => {
+            document.getElementById('create-dropdown').classList.add('hidden');
+            document.getElementById('notifications-dropdown').classList.add('hidden');
+            document.getElementById('player-settings-menu').classList.add('hidden');
+        });
+
+        // --- 13. INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPersistedState();
+            lucide.createIcons();
+            updateHeaderWalletBadge();
+            renderNotifications();
+            renderSidebarSubscriptions();
+            applyLanguageUI();
+        });
+    </script>
+</body>
+</html>
